@@ -6,17 +6,30 @@ Machine-checked reconstruction of Wittgenstein's *Tractatus Logico-Philosophicus
 
 ```
 proofs/                  # Lean 4 source
-  TractatusOntology.lean     # Core formalization (1,229 lines)
-  TractatusQuantifiers.lean  # First-order extension (288 lines)
+  TractatusOntology.lean     # Core formalization (1,308 lines, 44 declarations)
+  TractatusQuantifiers.lean  # First-order extension (284 lines, 9 declarations)
 research/tractatus-ontology/paper/
   tractatus-ontology.{N}/    # Paper versions (immutable)
 ```
+
+Proofs were originally developed in `../lean-genius` (`proofs/Proofs/Tractatus*.lean`), which also holds follow-on work (Horn/Equiv/Spectrum world-model files) not yet in the paper.
+
+## Lean build
+
+Toolchain `leanprover/lean4:v4.26.0`, mathlib `v4.26.0` (pinned in `lean-toolchain` / `lakefile.lean`).
+
+```bash
+lake update && lake exe cache get && lake build
+```
+
+Expected: zero errors, zero warnings (five `#eval` info lines are intentional demos). CI runs `lake build` on every push (`.github/workflows/ci.yml`). Note: v4.17-era Lean binaries do not run on current macOS; if `lake` resolves to the lean-genius wrapper, use `~/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lake`.
 
 ## Paper workflow
 
 Uses the pub domain skills (`.claude/skills/pub/`, `.claude/commands/pub/`).
 State machine: EMPTY → DRAFTED → REVIEWED → REVISED → ... → READY.
 Convergence: review score ≥ 32/40, 0 critical issues.
+Current: v4 (REVISED) — needs a fresh pub-review pass. The v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
 
 ## LaTeX build
 
@@ -30,9 +43,9 @@ cp .build/paper.pdf paper.pdf
 
 ## Key results
 
-- **Expressibility collapse**: nontrivial propositions cannot express world-independent truths (`saying_showing_triviality`)
-- **Three-way decomposition**: invariants / assumptions / limits across all 46 theorems
-- **Equivalence hierarchy**: structEq ⊊ formEq ⊊ semEq with strict separation witnesses
+- **Expressibility collapse**: nontrivial propositions cannot express world-independent truths (`saying_showing_triviality`; no `Nonempty S` needed)
+- **Three-way decomposition**: invariants / assumptions / limits across all 53 results
+- **Equivalence separation**: `structEq` strictly refines both `formEq` and `semEq`; `formEq` and `semEq` are provably **incomparable** (they do NOT form a chain), and `structEq ⊊ formEq ∩ semEq`
 - **1 deliberate axiom** (`axiom silence : True`), **0 sorries**
 
 ## Target venue

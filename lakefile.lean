@@ -1,14 +1,12 @@
 import Lake
 open Lake DSL
 
-package tractatus where
-  leanOptions := #[
-    ⟨`autoImplicit, false⟩
-  ]
+package tractatus
 
 @[default_target]
 lean_lib Proofs where
   srcDir := "proofs"
+  globs := #[.one `TractatusOntology, .one `TractatusQuantifiers]
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "v4.17.0"
+  "https://github.com/leanprover-community/mathlib4" @ "v4.26.0"

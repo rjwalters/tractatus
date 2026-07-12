@@ -17,6 +17,9 @@
 *.run.xml
 *.bcf
 
+# Lean build artifacts (lake-manifest.json IS tracked -- it pins dependency commits)
+.lake/
+
 # OS
 .DS_Store
 

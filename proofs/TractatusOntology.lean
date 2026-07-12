@@ -14,7 +14,7 @@ truth-functionally.
 
 What we formalize is the part that *can* be formalized. What
 escapes — the saying/showing distinction, the ladder of 6.54 —
-is discussed in the gallery annotations.
+is discussed in the accompanying paper.
 -/
 
 -- ═══════════════════════════════════════════════════════════════
@@ -58,7 +58,13 @@ not an exegesis of Wittgenstein's intent.
    Both `TractObject` and `Sachverhalt` are bare `variable (... : Type)`.
    Lean knows nothing about their inhabitants. This captures Wittgenstein's
    insistence on simplicity (TLP 2.02) and avoids committing to a structural
-   account of combination that the Tractatus leaves open.
+   account of combination that the Tractatus leaves open. Note that
+   `TractObject` is declared but plays no role in any subsequent
+   definition: the formal development begins at the level of Sachverhalte.
+   This is deliberate — TLP's objects enter only through their
+   combinations (TLP 2.0121), and we do not encode the combination
+   relation. Encoding it (Sachverhalt as a dependent type over
+   TractObject) is the natural next refinement; see design decision 2.
 
 6. THE SILENCE IS AXIOMATIC, NOT SORRY
    `axiom silence : True` (TLP 7) is a deliberate axiom, not a missing proof.
@@ -223,7 +229,13 @@ theorem Proposition.evalBool_correct (p : Proposition S) (w : S → Bool) :
     (p.evalBool w = true) ↔ p.eval (fun s => w s = true) := by
   induction p with
   | elementary s => simp [evalBool, eval]
-  | neg q ih     => simp [evalBool, eval, ih]
+  | neg q ih     =>
+    show (!q.evalBool w) = true ↔ ¬ q.eval (fun s => w s = true)
+    have h1 : (!q.evalBool w) = true ↔ q.evalBool w = false := by
+      cases q.evalBool w <;> simp
+    have h2 : q.evalBool w = false ↔ ¬ q.evalBool w = true := by
+      cases q.evalBool w <;> simp
+    rw [h1, h2, ih]
   | conj q r ihq ihr => simp [evalBool, eval, Bool.and_eq_true, ihq, ihr]
 
 -- ═══════════════════════════════════════════════════════════════
@@ -298,8 +310,8 @@ variable {S : Type} (M : WorldModel S)
 def evalM (p : Proposition S) (w : M.W) : Prop :=
   match p with
   | .elementary s => M.holds w s
-  | .neg q        => ¬ (evalM M q w)
-  | .conj q r     => evalM M q w ∧ evalM M r w
+  | .neg q        => ¬ (evalM q w)
+  | .conj q r     => evalM q w ∧ evalM r w
 
 /-- A proposition is a tautology in model `M` when it holds
     in every world of `M`. -/
@@ -326,8 +338,8 @@ theorem truth_functional_compositionality_gen (p : Proposition S)
     evalM M p w₁ ↔ evalM M p w₂ := by
   induction p with
   | elementary s => exact h s
-  | neg q ih     => simp only [evalM]; exact ih.not
-  | conj q r ihq ihr => simp only [evalM]; exact ihq.and ihr
+  | neg q ih     => simp only [evalM, ih]
+  | conj q r ihq ihr => simp only [evalM, ihq, ihr]
 
 end GeneralSemantics
 
@@ -462,12 +474,14 @@ and conjunction, confirming the adequacy of {¬, ∧} as a basis.
 
 theorem de_morgan_disj (p q : Proposition S) (w : World S) :
     (Proposition.disj p q).eval w ↔ (p.eval w ∨ q.eval w) := by
-  simp [Proposition.disj, Proposition.eval, not_and_or, not_not]
+  simp [Proposition.disj, Proposition.eval, not_not]
+  tauto
 
 theorem de_morgan_conj (p q : Proposition S) (w : World S) :
     (Proposition.neg (Proposition.conj p q)).eval w ↔
     (¬ p.eval w ∨ ¬ q.eval w) := by
-  simp [Proposition.eval, not_and_or]
+  simp [Proposition.eval]
+  tauto
 
 -- ---------------------------------------------------------------
 -- Theorem 8: Excluded middle is a tautology (TLP 4.46)
@@ -481,8 +495,7 @@ This is perhaps the simplest illustration of TLP 6.1.
 theorem excluded_middle_tautology (p : Proposition S) :
     IsTautology (Proposition.disj p (Proposition.neg p)) := by
   intro w
-  simp [Proposition.disj, Proposition.eval, not_and_or, not_not]
-  exact Classical.em _
+  simp [Proposition.disj, Proposition.eval, not_not]
 
 -- ---------------------------------------------------------------
 -- Theorem 9: Conjunction with negation is a contradiction
@@ -507,8 +520,7 @@ Implication, defined as ¬(p ∧ ¬q), has the standard semantics.
 
 theorem impl_semantics (p q : Proposition S) (w : World S) :
     (Proposition.impl p q).eval w ↔ (p.eval w → q.eval w) := by
-  simp [Proposition.impl, Proposition.eval, not_and_or, not_not]
-  tauto
+  simp [Proposition.impl, Proposition.eval, not_not]
 
 -- ---------------------------------------------------------------
 -- Theorem 11: Biconditional semantics
@@ -517,7 +529,7 @@ theorem impl_semantics (p q : Proposition S) (w : World S) :
 theorem biimp_semantics (p q : Proposition S) (w : World S) :
     (Proposition.biimp p q).eval w ↔ (p.eval w ↔ q.eval w) := by
   simp [Proposition.biimp, Proposition.impl, Proposition.eval,
-        not_and_or, not_not]
+        not_not]
   tauto
 
 -- ---------------------------------------------------------------
@@ -550,7 +562,6 @@ negation and conjunction are expressible via NAND.
 theorem nand_expresses_neg (p : Proposition S) (w : World S) :
     (Proposition.nand p p).eval w ↔ (Proposition.neg p).eval w := by
   simp [Proposition.nand, Proposition.eval]
-  tauto
 
 theorem nand_expresses_conj (p q : Proposition S) (w : World S) :
     (Proposition.neg (Proposition.nand p q)).eval w ↔
@@ -601,7 +612,7 @@ theorem constrained_independence_fails (a b : S) (hab : a ≠ b) :
   obtain ⟨⟨w, hw⟩, hmatch⟩ := h bad
   have ha : w a := (hmatch a).mpr rfl
   have hb : w b := hw ha
-  exact hab ((hmatch b).mp hb)
+  exact hab ((hmatch b).mp hb).symm
 
 -- ---------------------------------------------------------------
 -- 11b: Weather model — concrete constrained example
@@ -792,15 +803,16 @@ TLP 4.0141: "There is a general rule by means of which the musician
 
 Two propositions share their logical form iff one is obtained from
 the other by a bijective renaming of atoms (an `Equiv.Perm` on `S`).
-This is strictly between syntactic identity (`structEq`) and
-truth-conditional identity (`semEq`).
+This is strictly coarser than syntactic identity (`structEq`) and
+incomparable with truth-conditional identity (`semEq`) — see the
+separation witnesses below.
 
 `formEq` captures exactly what is preserved under Wittgenstein's
 projection: the tree structure (connective shape + arity at each
 node), but not which particular atoms appear. `structEq` is too
-strict (fixes atom identity); `semEq` is too weak (only truth
-tables). `formEq` is the formal correlate of 'same logical form'
-in the sense of 4.0141.
+strict (fixes atom identity); `semEq` tracks a different dimension
+entirely (truth tables, blind to form). `formEq` is the formal
+correlate of 'same logical form' in the sense of 4.0141.
 -/
 
 /-- Logical-form equivalence: two propositions share their logical
@@ -841,7 +853,7 @@ theorem formEq_trans {p q r : Proposition S}
   -- (e₁.trans e₂) acts as e₂ ∘ e₁ pointwise
   -- By rename_comp: (p.rename e₁).rename e₂ = p.rename (e₂ ∘ e₁)
   calc p.rename ⇑(e₁.trans e₂)
-      = p.rename (⇑e₂ ∘ ⇑e₁) := by congr 1; ext s; simp [Equiv.trans_apply]
+      = p.rename (⇑e₂ ∘ ⇑e₁) := by congr 1
     _ = (p.rename ⇑e₁).rename ⇑e₂ := (rename_comp _ _ _).symm
     _ = q.rename ⇑e₂ := by rw [heq₁]
     _ = r := heq₂
@@ -860,20 +872,19 @@ private theorem eq_of_structEq : ∀ (p q : Proposition S),
     intro q; cases q with
     | elementary s' =>
       simp [structEq]
-      intro h; subst h; rfl
     | _ => simp [structEq]
   | neg p' ih =>
     intro q; cases q with
     | neg q' =>
       simp [structEq]
-      intro h; exact congrArg Proposition.neg (ih q' h)
+      exact ih q'
     | _ => simp [structEq]
   | conj p' p'' ih₁ ih₂ =>
     intro q; cases q with
     | conj q' q'' =>
       simp [structEq]
       intro h₁ h₂
-      exact congr (congrArg Proposition.conj (ih₁ q' h₁)) (ih₂ q'' h₂)
+      exact ⟨ih₁ q' h₁, ih₂ q'' h₂⟩
     | _ => simp [structEq]
 
 /-- `structEq` implies `formEq`: syntactically identical propositions
@@ -881,7 +892,16 @@ private theorem eq_of_structEq : ∀ (p q : Proposition S),
     permutation. -/
 theorem structEq_implies_formEq {p q : Proposition S}
     (h : p.structEq q) : p.formEq q :=
-  ⟨Equiv.refl S, by rw [rename_id]; exact eq_of_structEq p q h⟩
+  ⟨Equiv.refl S, by simp only [Equiv.coe_refl, rename_id]; exact eq_of_structEq p q h⟩
+
+/-- `structEq` implies `semEq`: structurally identical propositions
+    are (trivially) semantically equivalent. Together with
+    `structEq_implies_formEq`, this shows `structEq` refines both
+    coarser relations. -/
+theorem structEq_implies_semEq {p q : Proposition S}
+    (h : p.structEq q) : p.semEq q := by
+  rw [eq_of_structEq p q h]
+  exact fun _ => Iff.rfl
 
 -- ---------------------------------------------------------------
 -- Hierarchy: formEq → truth-table isomorphism
@@ -914,7 +934,7 @@ theorem formEq_implies_truth_table_iso {p q : Proposition S}
   rw [rename_eval]
   -- Goal: p.eval w ↔ p.eval (fun s => (w ∘ ⇑(e.symm)) (e s))
   -- Since e.symm (e s) = s, both sides are equal.
-  suffices hsuff : (fun s => (w ∘ ⇑(e.symm)) (↑e s)) = w by rw [hsuff]
+  suffices hsuff : (fun s => (w ∘ ⇑(e.symm)) (⇑e s)) = w by rw [hsuff]
   ext s
   simp [Function.comp, Equiv.symm_apply_apply]
 
@@ -926,10 +946,29 @@ theorem truth_table_iso_id_implies_semEq {p q : Proposition S}
   h
 
 -- ---------------------------------------------------------------
--- Strictness witnesses: structEq ⊊ formEq ⊊ semEq
+-- Separation witnesses: structEq ⊊ formEq, structEq ⊊ semEq,
+-- and formEq / semEq are incomparable
 -- ---------------------------------------------------------------
 
-/-- Witness that `structEq ⊊ formEq` (strict containment):
+/-
+The three relations do NOT form a chain. `structEq` strictly
+refines both `formEq` and `semEq`, but `formEq` and `semEq` are
+incomparable: neither contains the other.
+
+  - formEq ⊄ semEq: atom-swapped elementaries share their form
+    but differ in truth value (`formEq_not_semEq_witness`).
+  - semEq ⊄ formEq: double negation preserves truth conditions
+    but changes tree depth (`semEq_not_formEq_witness`).
+  - The intersection formEq ∩ semEq strictly contains structEq:
+    commuted conjunctions witness the gap
+    (`formEq_semEq_not_structEq_witness`).
+
+Philosophically this is the sharper result: logical form neither
+determines nor is determined by truth conditions. They are
+orthogonal dimensions of a proposition's identity.
+-/
+
+/-- Witness that `structEq ⊊ formEq` (strict refinement):
     two elementary propositions with swapped atoms are `formEq`
     (via the swap permutation) but not `structEq` (different atoms). -/
 theorem formEq_not_structEq_witness :
@@ -945,7 +984,7 @@ theorem formEq_not_structEq_witness :
     intro h
     simp [structEq] at h
 
-/-- Witness that `formEq ⊊ semEq` (strict containment):
+/-- Witness that `semEq ⊄ formEq`:
     `neg (neg (elementary s))` is `semEq` to `elementary s`
     (by double negation) but NOT `formEq` (rename preserves
     tree depth, so neg-neg-elementary cannot become elementary). -/
@@ -959,6 +998,36 @@ theorem semEq_not_formEq_witness (s : TwoFacts) :
   · -- not formEq: rename preserves tree structure
     rintro ⟨e, heq⟩
     simp [rename] at heq
+
+/-- Witness that `formEq ⊄ semEq`: atom-swapped elementaries share
+    their logical form (swap permutation) but differ in truth value
+    at `rainyWorld`, so they are not semantically equivalent.
+    Together with `semEq_not_formEq_witness`, this shows `formEq`
+    and `semEq` are incomparable. -/
+theorem formEq_not_semEq_witness :
+    (Proposition.elementary TwoFacts.rain).formEq
+      (Proposition.elementary TwoFacts.snow)
+    ∧ ¬ (Proposition.elementary TwoFacts.rain).semEq
+          (Proposition.elementary TwoFacts.snow) := by
+  refine ⟨formEq_not_structEq_witness.1, ?_⟩
+  intro h
+  exact (h rainyWorld).mp trivial
+
+/-- Witness that `structEq` is strictly finer than the intersection
+    `formEq ∩ semEq`: commuted conjunctions share both logical form
+    (swap permutation) and truth conditions (commutativity of ∧),
+    yet are not structurally equal. -/
+theorem formEq_semEq_not_structEq_witness :
+    ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).formEq
+      (Proposition.conj (.elementary .snow) (.elementary .rain)))
+    ∧ ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).semEq
+      (Proposition.conj (.elementary .snow) (.elementary .rain)))
+    ∧ ¬ ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).structEq
+      (Proposition.conj (.elementary .snow) (.elementary .rain))) := by
+  refine ⟨⟨Equiv.swap .rain .snow, ?_⟩, fun w => and_comm, ?_⟩
+  · simp [rename, Equiv.swap_apply_left, Equiv.swap_apply_right]
+  · rintro ⟨h₁, -⟩
+    simp [structEq] at h₁
 
 end Proposition
 
@@ -975,17 +1044,21 @@ has an extra layer of negation in its syntactic tree.
 This theorem makes explicit what the formalization captures and what
 it cannot: truth conditions, but not logical form.
 
-With the introduction of `formEq`, we now have a three-level hierarchy
-of proposition equivalence:
-
-  structEq ⊊ formEq ⊊ semEq
+With the introduction of `formEq`, we distinguish three notions of
+proposition equivalence:
 
 - `structEq` identifies tree shape AND atom identity.
 - `formEq` identifies tree shape up to atom permutation.
 - `semEq` identifies truth-table content (world-by-world agreement).
 
-Each inclusion is strict: atom-swapped elementaries witness
-structEq ⊊ formEq, and double negation witnesses formEq ⊊ semEq.
+Their exact relationship (proved above): `structEq` strictly refines
+both `formEq` and `semEq`, while `formEq` and `semEq` are
+INCOMPARABLE — atom-swapped elementaries are formEq but not semEq
+(`formEq_not_semEq_witness`), and double negation is semEq but not
+formEq (`semEq_not_formEq_witness`). Even the intersection
+formEq ∩ semEq strictly contains structEq
+(`formEq_semEq_not_structEq_witness`). Logical form and truth
+conditions are orthogonal dimensions of a proposition's identity.
 -/
 
 -- [MAIN RESULT] --------------------------------------------------
@@ -1066,7 +1139,9 @@ FORMAL LIMITS (provable boundaries of the system):
     — formalization captures truth conditions but not logical form
 
 The three classes are mutually exclusive and jointly exhaustive
-across all 25 theorems in this file.
+across the theorem/lemma declarations in this file (helper lemmas
+for the equivalence hierarchy and the Bool-valued evaluation
+bridge are classified separately in the paper's appendix).
 -/
 -- ═══════════════════════════════════════════════════════════════
 -- SECTION 14: The Limits of Formalization (TLP 6.54, 7)
@@ -1077,19 +1152,21 @@ across all 25 theorems in this file.
 -- ---------------------------------------------------------------
 
 /-- A proposition whose truth value is the same in all worlds
-    must be a tautology or a contradiction. -/
-lemma world_constant_taut_or_contra (q : Proposition S) [Nonempty S]
+    must be a tautology or a contradiction.
+
+    Note that no `Nonempty S` assumption is needed: `World S = S → Prop`
+    is always inhabited (e.g. by `fun _ => True`), so a witness world
+    exists even when `S` is empty. -/
+lemma world_constant_taut_or_contra (q : Proposition S)
     (h : ∀ w₁ w₂ : World S, q.eval w₁ ↔ q.eval w₂) :
     IsTautology q ∨ IsContradiction q := by
-  obtain ⟨s₀⟩ : Nonempty S := inferInstance
-  set w₀ : World S := fun _ => True with hw₀
-  by_cases hq : q.eval w₀
+  by_cases hq : q.eval (fun _ => True)
   · left
     intro w
-    exact (h w₀ w).mp hq
+    exact (h (fun _ => True) w).mp hq
   · right
     intro w hqw
-    exact hq ((h w w₀).mp hqw)
+    exact hq ((h w (fun _ => True)).mp hqw)
 
 -- ---------------------------------------------------------------
 -- Theorem: World-independent facts collapse to triviality
@@ -1103,7 +1180,7 @@ lemma world_constant_taut_or_contra (q : Proposition S) [Nonempty S]
     tracks the meta-level proposition `P` in every world.  Since
     `expresses` unfolds to `∀ w, q.eval w ↔ P`, this is
     definitionally compatible with all prior callers. -/
-theorem saying_showing_triviality (q : Proposition S) (P : Prop) [Nonempty S]
+theorem saying_showing_triviality (q : Proposition S) (P : Prop)
     (h : expresses q P) :
     IsTautology q ∨ IsContradiction q := by
   apply world_constant_taut_or_contra
@@ -1112,10 +1189,11 @@ theorem saying_showing_triviality (q : Proposition S) (P : Prop) [Nonempty S]
 
 /-- A non-trivial proposition must have different truth values
     in some pair of worlds. -/
-theorem contingent_propositions_vary (q : Proposition S) [Nonempty S]
+theorem contingent_propositions_vary (q : Proposition S)
     (h_not_taut : ¬ IsTautology q)
     (h_not_contra : ¬ IsContradiction q) :
     ∃ w₁ w₂ : World S, q.eval w₁ ∧ ¬ q.eval w₂ := by
+  unfold IsContradiction at h_not_contra
   push_neg at h_not_contra
   obtain ⟨w₁, hw₁⟩ := h_not_contra
   unfold IsTautology at h_not_taut
@@ -1130,7 +1208,7 @@ theorem contingent_propositions_vary (q : Proposition S) [Nonempty S]
 /-- A proposition that is neither a tautology nor a contradiction
     is nontrivial: it varies across worlds. Direct corollary of
     `contingent_propositions_vary`. -/
-theorem nontrivial_of_not_taut_not_contra (q : Proposition S) [Nonempty S]
+theorem nontrivial_of_not_taut_not_contra (q : Proposition S)
     (h_not_taut : ¬ IsTautology q)
     (h_not_contra : ¬ IsContradiction q) :
     Nontrivial q :=
@@ -1139,7 +1217,7 @@ theorem nontrivial_of_not_taut_not_contra (q : Proposition S) [Nonempty S]
 /-- `Nontrivial` is equivalent to being neither a tautology nor
     a contradiction. The forward direction unpacks the witnesses;
     the backward direction delegates to `contingent_propositions_vary`. -/
-theorem nontrivial_iff_not_taut_not_contra (q : Proposition S) [Nonempty S] :
+theorem nontrivial_iff_not_taut_not_contra (q : Proposition S) :
     Nontrivial q ↔ ¬ IsTautology q ∧ ¬ IsContradiction q := by
   constructor
   · rintro ⟨w₁, w₂, h₁, h₂⟩
@@ -1176,7 +1254,7 @@ sense; it merely shares its truth value by accident of logic.
     This is the formal content of TLP 7 -- what cannot be said
     (non-trivially) in the object language can only be shown
     by the structure of the metalanguage. -/
-theorem proposition_seven (q : Proposition S) (P : Prop) [Nonempty S]
+theorem proposition_seven (q : Proposition S) (P : Prop)
     (h : expresses q P) :
     IsTautology q ∨ IsContradiction q :=
   saying_showing_triviality q P h
@@ -1185,7 +1263,7 @@ theorem proposition_seven (q : Proposition S) (P : Prop) [Nonempty S]
     with the world -- i.e., P cannot be world-independent.
     Contrapositive of `saying_showing_triviality`. -/
 theorem nontrivial_expressibility_requires_world_dependence
-    (q : Proposition S) (P : Prop) [Nonempty S]
+    (q : Proposition S) (P : Prop)
     (hnt : Nontrivial q)
     (h : expresses q P) :
     False := by
@@ -1195,13 +1273,14 @@ theorem nontrivial_expressibility_requires_world_dependence
   · obtain ⟨w₁, _, h₁, _⟩ := hnt
     exact (hcontra w₁) h₁
 
-/-- A nontrivial proposition cannot express any world-independent
+/-- **Corollary of `nontrivial_expressibility_requires_world_dependence`.**
+    A nontrivial proposition cannot express any world-independent
     property.  If `p` varies across worlds, there is no `P : Prop`
     such that `expresses p P`.  This is the typed form of the
     saying/showing boundary: genuine content cannot be pinned to a
     single meta-proposition. -/
 theorem nontrivial_cannot_express_world_independent
-    (p : Proposition S) (P : Prop) [Nonempty S]
+    (p : Proposition S) (P : Prop)
     (hnt : Nontrivial p) :
     ¬ expresses p P := by
   intro h
