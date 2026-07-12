@@ -6,7 +6,7 @@ Machine-checked reconstruction of Wittgenstein's *Tractatus Logico-Philosophicus
 
 ```
 proofs/                  # Lean 4 source
-  TractatusOntology.lean     # Core formalization (1,308 lines, 44 declarations)
+  TractatusOntology.lean     # Core formalization (1,345 lines, 45 declarations)
   TractatusQuantifiers.lean  # First-order extension (284 lines, 9 declarations)
 research/tractatus-ontology/paper/
   tractatus-ontology.{N}/    # Paper versions (immutable)
@@ -29,7 +29,7 @@ Expected: zero errors, zero warnings (five `#eval` info lines are intentional de
 Uses the pub domain skills (`.claude/skills/pub/`, `.claude/commands/pub/`).
 State machine: EMPTY → DRAFTED → REVIEWED → REVISED → ... → READY.
 Convergence: review score ≥ 32/40, 0 critical issues.
-Current: v4 (REVISED) — needs a fresh pub-review pass. The v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
+Current: v5 (REVISED, from the v4 review at 35/40) — needs a fresh pub-review pass. The v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
 
 ## LaTeX build
 
@@ -44,8 +44,8 @@ cp .build/paper.pdf paper.pdf
 ## Key results
 
 - **Expressibility collapse**: nontrivial propositions cannot express world-independent truths (`saying_showing_triviality`; no `Nonempty S` needed)
-- **Three-way decomposition**: invariants / assumptions / limits across all 53 results
-- **Equivalence separation**: `structEq` strictly refines both `formEq` and `semEq`; `formEq` and `semEq` are provably **incomparable** (they do NOT form a chain), and `structEq ⊊ formEq ∩ semEq`
+- **Three-way decomposition**: invariants / assumptions / limits across all 54 results
+- **Equivalence separation**: `structEq` strictly refines both `formEq` and `semEq`; `formEq` and `semEq` are provably **incomparable** (they do NOT form a chain), and `structEq ⊊ formEq ∩ semEq` — witnesses hold for arbitrary `S` with two distinct atoms
 - **1 deliberate axiom** (`axiom silence : True`), **0 sorries**
 
 ## Target venue

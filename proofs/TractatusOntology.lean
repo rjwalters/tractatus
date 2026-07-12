@@ -945,6 +945,24 @@ theorem truth_table_iso_id_implies_semEq {p q : Proposition S}
     (h : ∀ w : World S, p.eval w ↔ q.eval w) : p.semEq q :=
   h
 
+/-- Truth-table isomorphism is nearly vacuous: ANY proposition is
+    truth-table-isomorphic to ANY nontrivial proposition. With
+    classical choice, relabel each world to a `q`-satisfying or
+    `q`-refuting world according to `p`'s truth value there. This is
+    why truth-table isomorphism cannot serve as an intermediate
+    notion between `formEq` and `semEq`: it is a lemma, not a rung
+    of a hierarchy. -/
+theorem truth_table_iso_of_nontrivial (p : Proposition S)
+    {q : Proposition S} (hq : Nontrivial q) :
+    ∃ f : World S → World S, ∀ w : World S, p.eval w ↔ q.eval (f w) := by
+  classical
+  obtain ⟨w₁, w₂, hq₁, hq₂⟩ := hq
+  refine ⟨fun w => if p.eval w then w₁ else w₂, fun w => ?_⟩
+  show p.eval w ↔ q.eval (if p.eval w then w₁ else w₂)
+  by_cases hp : p.eval w
+  · rw [if_pos hp]; exact iff_of_true hp hq₁
+  · rw [if_neg hp]; exact iff_of_false hp hq₂
+
 -- ---------------------------------------------------------------
 -- Separation witnesses: structEq ⊊ formEq, structEq ⊊ semEq,
 -- and formEq / semEq are incomparable
@@ -968,27 +986,28 @@ determines nor is determined by truth conditions. They are
 orthogonal dimensions of a proposition's identity.
 -/
 
-/-- Witness that `structEq ⊊ formEq` (strict refinement):
-    two elementary propositions with swapped atoms are `formEq`
-    (via the swap permutation) but not `structEq` (different atoms). -/
-theorem formEq_not_structEq_witness :
-    (Proposition.elementary TwoFacts.rain).formEq
-      (Proposition.elementary TwoFacts.snow)
-    ∧ ¬ (Proposition.elementary TwoFacts.rain).structEq
-          (Proposition.elementary TwoFacts.snow) := by
+/-- Witness that `structEq ⊊ formEq` (strict refinement): for ANY
+    two distinct atoms `a ≠ b`, the elementary propositions on `a`
+    and `b` are `formEq` (via the swap permutation) but not
+    `structEq` (different atoms). Stated for arbitrary `S`, not a
+    concrete atom type. -/
+theorem formEq_not_structEq_witness (a b : S) (hab : a ≠ b) :
+    (Proposition.elementary a).formEq (Proposition.elementary b)
+    ∧ ¬ (Proposition.elementary a).structEq (Proposition.elementary b) := by
+  classical
   constructor
   · -- formEq via swap permutation
-    refine ⟨Equiv.swap .rain .snow, ?_⟩
+    refine ⟨Equiv.swap a b, ?_⟩
     simp [rename, Equiv.swap_apply_left]
   · -- not structEq: different atoms
     intro h
-    simp [structEq] at h
+    exact hab h
 
-/-- Witness that `semEq ⊄ formEq`:
+/-- Witness that `semEq ⊄ formEq`: for ANY atom `s`,
     `neg (neg (elementary s))` is `semEq` to `elementary s`
     (by double negation) but NOT `formEq` (rename preserves
     tree depth, so neg-neg-elementary cannot become elementary). -/
-theorem semEq_not_formEq_witness (s : TwoFacts) :
+theorem semEq_not_formEq_witness (s : S) :
     (Proposition.neg (.neg (.elementary s))).semEq (.elementary s)
     ∧ ¬ (Proposition.neg (.neg (.elementary s))).formEq (.elementary s) := by
   constructor
@@ -999,35 +1018,53 @@ theorem semEq_not_formEq_witness (s : TwoFacts) :
     rintro ⟨e, heq⟩
     simp [rename] at heq
 
-/-- Witness that `formEq ⊄ semEq`: atom-swapped elementaries share
-    their logical form (swap permutation) but differ in truth value
-    at `rainyWorld`, so they are not semantically equivalent.
+/-- Witness that `formEq ⊄ semEq`: for ANY two distinct atoms,
+    the elementary propositions share their logical form (swap
+    permutation) but differ in truth value at the world where
+    exactly `a` obtains, so they are not semantically equivalent.
     Together with `semEq_not_formEq_witness`, this shows `formEq`
-    and `semEq` are incomparable. -/
-theorem formEq_not_semEq_witness :
-    (Proposition.elementary TwoFacts.rain).formEq
-      (Proposition.elementary TwoFacts.snow)
-    ∧ ¬ (Proposition.elementary TwoFacts.rain).semEq
-          (Proposition.elementary TwoFacts.snow) := by
-  refine ⟨formEq_not_structEq_witness.1, ?_⟩
+    and `semEq` are incomparable over any `S` with two atoms. -/
+theorem formEq_not_semEq_witness (a b : S) (hab : a ≠ b) :
+    (Proposition.elementary a).formEq (Proposition.elementary b)
+    ∧ ¬ (Proposition.elementary a).semEq (Proposition.elementary b) := by
+  refine ⟨(formEq_not_structEq_witness a b hab).1, ?_⟩
   intro h
-  exact (h rainyWorld).mp trivial
+  exact hab ((h (fun s => s = a)).mp rfl).symm
 
 /-- Witness that `structEq` is strictly finer than the intersection
-    `formEq ∩ semEq`: commuted conjunctions share both logical form
-    (swap permutation) and truth conditions (commutativity of ∧),
-    yet are not structurally equal. -/
-theorem formEq_semEq_not_structEq_witness :
+    `formEq ∩ semEq`: for ANY two distinct atoms, the commuted
+    conjunctions share both logical form (swap permutation) and
+    truth conditions (commutativity of ∧), yet are not structurally
+    equal. -/
+theorem formEq_semEq_not_structEq_witness (a b : S) (hab : a ≠ b) :
+    ((Proposition.conj (.elementary a) (.elementary b)).formEq
+      (Proposition.conj (.elementary b) (.elementary a)))
+    ∧ ((Proposition.conj (.elementary a) (.elementary b)).semEq
+      (Proposition.conj (.elementary b) (.elementary a)))
+    ∧ ¬ ((Proposition.conj (.elementary a) (.elementary b)).structEq
+      (Proposition.conj (.elementary b) (.elementary a))) := by
+  classical
+  refine ⟨⟨Equiv.swap a b, ?_⟩, fun w => and_comm, ?_⟩
+  · simp [rename, Equiv.swap_apply_left, Equiv.swap_apply_right]
+  · rintro ⟨h₁, -⟩
+    exact hab h₁
+
+-- Concrete instantiations at TwoFacts (rain ≠ snow), connecting the
+-- general witnesses to the running example. `example` declarations
+-- are checked by Lean but add no names to the theorem count.
+example :
+    (Proposition.elementary TwoFacts.rain).formEq (.elementary .snow)
+    ∧ ¬ (Proposition.elementary TwoFacts.rain).semEq (.elementary .snow) :=
+  formEq_not_semEq_witness TwoFacts.rain TwoFacts.snow (by decide)
+
+example :
     ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).formEq
       (Proposition.conj (.elementary .snow) (.elementary .rain)))
     ∧ ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).semEq
       (Proposition.conj (.elementary .snow) (.elementary .rain)))
     ∧ ¬ ((Proposition.conj (.elementary TwoFacts.rain) (.elementary .snow)).structEq
-      (Proposition.conj (.elementary .snow) (.elementary .rain))) := by
-  refine ⟨⟨Equiv.swap .rain .snow, ?_⟩, fun w => and_comm, ?_⟩
-  · simp [rename, Equiv.swap_apply_left, Equiv.swap_apply_right]
-  · rintro ⟨h₁, -⟩
-    simp [structEq] at h₁
+      (Proposition.conj (.elementary .snow) (.elementary .rain))) :=
+  formEq_semEq_not_structEq_witness TwoFacts.rain TwoFacts.snow (by decide)
 
 end Proposition
 
