@@ -29,7 +29,7 @@ Expected: zero errors, zero warnings (five `#eval` info lines are intentional de
 Uses the pub domain skills (`.claude/skills/pub/`, `.claude/commands/pub/`).
 State machine: EMPTY → DRAFTED → REVIEWED → REVISED → ... → READY.
 Convergence: review score ≥ 32/40, 0 critical issues.
-Current: v5 (REVISED, from the v4 review at 35/40) — needs a fresh pub-review pass. The v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
+Current: v6 (READY — v5 review scored 38/40, 0 critical; v6 adds the Lampert & Nakano 2025 discussion). Remaining before submission: CUP class conversion. Historical note: the v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
 
 ## LaTeX build
 
