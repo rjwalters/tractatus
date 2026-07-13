@@ -85,6 +85,18 @@ REPO_ROOT=$(cd "$(dirname "$GIT_COMMON_DIR")" && pwd)
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/worktree-root.sh"
 WORKTREE_ROOT_DIR="$(loom_worktree_root "$REPO_ROOT")"
 
+# Shared default-branch resolver (#15). The base ref for a PR worktree must not
+# be hardcoded to origin/main — this repo defaults to `master`. Resolve it
+# dynamically (offline-first, network fallback); a detection failure is a hard
+# error so it surfaces clearly rather than as `invalid reference: origin/main`.
+# shellcheck source=lib/default-branch.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/default-branch.sh"
+if ! DEFAULT_BRANCH="$(loom_default_branch origin)"; then
+    print_error "Could not determine the repository's default branch."
+    print_info "Run 'git remote set-head origin --auto' or set LOOM_DEFAULT_BRANCH."
+    exit 1
+fi
+
 WORKTREE_PATH="$WORKTREE_ROOT_DIR/pr-$PR_NUMBER"
 
 # If the worktree already exists, treat it as reusable. The doctor may
@@ -110,18 +122,18 @@ fi
 print_info "Creating PR worktree for PR #$PR_NUMBER..."
 print_info "  Path: $WORKTREE_PATH"
 
-# Create the worktree on a detached HEAD of origin/main, then run
+# Create the worktree on a detached HEAD of the default branch, then run
 # `gh pr checkout` from inside it. This avoids ever touching the
 # orchestrator's main worktree HEAD.
 mkdir -p "$WORKTREE_ROOT_DIR"
 
-# Fetch origin/main so we have something to base the worktree on.
-git -C "$REPO_ROOT" fetch origin main >/dev/null 2>&1 || \
-    print_warning "Could not fetch origin/main (continuing)"
+# Fetch origin/$DEFAULT_BRANCH so we have something to base the worktree on.
+git -C "$REPO_ROOT" fetch origin "$DEFAULT_BRANCH" >/dev/null 2>&1 || \
+    print_warning "Could not fetch origin/$DEFAULT_BRANCH (continuing)"
 
 # Use --detach so we don't create a stale branch ref. `gh pr checkout` will
 # switch to the PR's branch once we cd into the worktree.
-if ! git -C "$REPO_ROOT" worktree add --detach "$WORKTREE_PATH" origin/main 2>/dev/null; then
+if ! git -C "$REPO_ROOT" worktree add --detach "$WORKTREE_PATH" "origin/$DEFAULT_BRANCH" 2>/dev/null; then
     print_error "Failed to create worktree at $WORKTREE_PATH"
     exit 1
 fi
