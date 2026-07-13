@@ -1,0 +1,100 @@
+\begin{thebibliography}{10}
+
+\bibitem{armstrong1989}
+D.~M. Armstrong.
+\newblock {\em A Combinatorial Theory of Possibility}.
+\newblock Cambridge University Press, Cambridge, 1989.
+
+\bibitem{benzmuller2014}
+Christoph Benzm\"uller and Bruno Woltzenlogel~Paleo.
+\newblock Automating {G\"odel's} ontological proof of {G}od's existence with
+  higher-order automated theorem provers.
+\newblock In {\em Proceedings of ECAI 2014}, pages 93--98. IOS Press, 2014.
+
+\bibitem{button2017}
+Tim Button.
+\newblock Exclusion problems and the cardinality of logical space.
+\newblock {\em Journal of Philosophical Logic}, 46(6):611--623, 2017.
+
+\bibitem{moura2021}
+Leonardo de~Moura and Sebastian Ullrich.
+\newblock The {Lean 4} theorem prover and programming language.
+\newblock In {\em Automated Deduction -- CADE 28}, volume 12699 of {\em LNCS},
+  pages 625--635. Springer, 2021.
+
+\bibitem{evans2014}
+Richard~Prideaux Evans and Martin Berger.
+\newblock Cathoristic logic: A modal logic of incompatible propositions, 2014.
+\newblock arXiv preprint arXiv:1411.7158.
+
+\bibitem{hacker1986}
+P.~M.~S. Hacker.
+\newblock {\em Insight and Illusion: Themes in the Philosophy of Wittgenstein}.
+\newblock Clarendon Press, Oxford, revised edition, 1986.
+
+\bibitem{horn1951}
+Alfred Horn.
+\newblock On sentences which are true of direct unions of algebras.
+\newblock {\em The Journal of Symbolic Logic}, 16(1):14--21, 1951.
+
+\bibitem{lokhorst1988}
+Gert-Jan~C. Lokhorst.
+\newblock Ontology, semantics and philosophy of mind in {W}ittgenstein's
+  {{\emph{Tractatus}}}: A formal reconstruction.
+\newblock {\em Erkenntnis}, 29(1):35--75, 1988.
+
+\bibitem{mckinsey1943}
+J.~C.~C. McKinsey.
+\newblock The decision problem for some classes of sentences without
+  quantifiers.
+\newblock {\em The Journal of Symbolic Logic}, 8(3):61--76, 1943.
+
+\bibitem{moss2012}
+Sarah Moss.
+\newblock Solving the color incompatibility problem.
+\newblock {\em Journal of Philosophical Logic}, 41(5):841--851, 2012.
+
+\bibitem{ramsey1923}
+Frank~P. Ramsey.
+\newblock Critical notice of {L}. {W}ittgenstein's {{\emph{Tractatus
+  Logico-Philosophicus}}}.
+\newblock {\em Mind}, 32(128):465--478, 1923.
+
+\bibitem{skyrms1981}
+Brian Skyrms.
+\newblock Tractarian nominalism.
+\newblock {\em Philosophical Studies}, 40(2):199--206, 1981.
+
+\bibitem{spinney2022}
+Oliver~Thomas Spinney.
+\newblock Logical form and logical space in {W}ittgenstein's
+  {{\emph{Tractatus}}}.
+\newblock {\em Synthese}, 200(1), 2022.
+\newblock Article 31.
+
+\bibitem{companion2026}
+Robb Walters.
+\newblock What {L}ean cannot say: A machine-checked analysis of
+  {W}ittgenstein's {{\emph{Tractatus}}}.
+\newblock Manuscript under review. Proof artifact: the \texttt{tractatus}
+  Lean~4 repository, \url{https://github.com/rjwalters/tractatus} (commit
+  0852c5b), 2026.
+
+\bibitem{weiss2017}
+Max Weiss.
+\newblock Logic in the {T}ractatus.
+\newblock {\em The Review of Symbolic Logic}, 10(1):1--50, 2017.
+
+\bibitem{wittgenstein1929}
+Ludwig Wittgenstein.
+\newblock Some remarks on logical form.
+\newblock {\em Proceedings of the Aristotelian Society}, 9:162--171, 1929.
+\newblock Supplementary Volume.
+
+\bibitem{wittgenstein1921}
+Ludwig Wittgenstein.
+\newblock {\em Tractatus Logico-Philosophicus}.
+\newblock Routledge \& Kegan Paul, London, 1961.
+\newblock First published 1921 as ``Logisch-philosophische Abhandlung''.
+
+\end{thebibliography}
