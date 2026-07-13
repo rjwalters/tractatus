@@ -135,7 +135,7 @@ These results yield a formal decomposition of the \emph{Tractatus}
 into invariants, assumptions, and limits, and provide a precise
 characterization of the saying/showing distinction as a theorem
 about expressibility in truth-functional languages.
-The formalization comprises 2,148 lines of \Lean~4, proves 77
+The formalization comprises 2,296 lines of \Lean~4, proves 80
 formally verified results with 0 \texttt{sorry} obligations
 and 1 deliberate axiom (\texttt{axiom silence : True}, encoding
 TLP~7).%
@@ -267,7 +267,7 @@ The specific contributions of this paper are:
     many atoms the totality property of TLP~1 is invariant yet
     expressed by no proposition---a finite/infinite dichotomy
     turning on finite support (Section~\ref{sec:whatcanbesaid}).
-  \item A three-way decomposition of all 77 formalized results
+  \item A three-way decomposition of all 80 formalized results
     into invariants, assumptions, and limits
     (Table~\ref{tab:decomposition}, Appendix~\ref{app:theorems}).
   \item A first-order extension using higher-order abstract syntax,
@@ -276,13 +276,14 @@ The specific contributions of this paper are:
 \end{enumerate}
 
 \noindent
-The formalization comprises 2,148 lines of \Lean~4 across five
+The formalization comprises 2,296 lines of \Lean~4 across six
 files.\footnote{%
   \texttt{TractatusOntology.lean} (1,345 lines, 45 theorem/lemma
   declarations), \texttt{TractatusQuantifiers.lean} (284 lines, 9),
   \texttt{TractatusNOperator.lean} (239 lines, 11),
-  \texttt{TractatusCompleteness.lean} (142 lines, 9), and
-  \texttt{TractatusExpressibility.lean} (138 lines, 3), plus 1
+  \texttt{TractatusCompleteness.lean} (142 lines, 9),
+  \texttt{TractatusExpressibility.lean} (138 lines, 3), and
+  \texttt{TractatusDecidability.lean} (148 lines, 3), plus 1
   deliberate axiom.  Appendix~\ref{app:theorems} lists every
   declaration.}
 All proofs compile with 0 \texttt{sorry} obligations.
@@ -1188,6 +1189,23 @@ declarations.  The theorem as stated is therefore machine-checked
 at full generality.
 \end{proof}
 
+\begin{remark}[Decidability]
+\label{rem:decidability}
+Over finite atom types the three relations are not merely
+separated but \emph{decidable}: the module
+\texttt{TractatusDecidability} proves
+\texttt{semEq\_iff\_evalBool}---semantic equivalence coincides
+with agreement of the computable $\mathsf{Bool}$-valued
+evaluators on all $\mathsf{Bool}$ assignments, for an arbitrary
+atom type---and derives decision procedures
+\texttt{decideSemEq} and \texttt{decideFormEq} once $\Sach$ is a
+$\mathsf{Fintype}$.  So the separation of
+Theorem~\ref{thm:hierarchy} is checkable by pure computation: at
+\texttt{TwoFacts} the witnesses are decided by \texttt{\#eval},
+mirroring the evaluator demonstrations of
+Section~\ref{sec:eval}.
+\end{remark}
+
 \begin{remark}[On truth-table isomorphism]
 \label{rem:tt-iso}
 What survives of the intuition that logical form is
@@ -1742,8 +1760,8 @@ the decomposition.
 
 We have presented a machine-checked reconstruction of the
 semantic core of \emph{Tractatus Logico-Philosophicus} in
-\Lean~4.  The formalization proves 77 formally verified results
-across five files, decomposes the
+\Lean~4.  The formalization proves 80 formally verified results
+across six files, decomposes the
 \emph{Tractatus} into structural invariants, model-dependent
 assumptions, and formal limits of expressibility, and
 characterizes the saying/showing distinction as a theorem:
@@ -1780,22 +1798,27 @@ browsable proof gallery at
 \section*{Acknowledgments}
 
 The proofs in \texttt{TractatusNOperator.lean},
-\texttt{TractatusCompleteness.lean}, and
-\texttt{TractatusExpressibility.lean} were produced by Harmonic's
+\texttt{TractatusCompleteness.lean},
+\texttt{TractatusExpressibility.lean}, and
+\texttt{TractatusDecidability.lean} were produced by Harmonic's
 Aristotle automated theorem prover~\cite{harmonic2026} from
 theorem statements authored by us (submitted with \texttt{sorry}
 placeholders; statements unchanged), and were re-verified by the
 \Lean{} kernel against the repository's pinned toolchain.  Their
 axiom footprint is \texttt{propext}, \texttt{Classical.choice},
 \texttt{Quot.sound} only.  For
-\texttt{TractatusExpressibility.lean}, the support the Aristotle
+\texttt{TractatusExpressibility.lean} and
+\texttt{TractatusDecidability.lean}, the support the Aristotle
 problem files inlined (re-declared syntax and semantics, the
 Bool-valued evaluator, truth-functional compositionality, and the
 disjunctive-normal-form construction) is de-duplicated against the
-built development; only the three headline
+built development; only the headline
 statements---\texttt{expressible\_iff\_iff\_invariant},
-\texttt{eval\_depends\_only\_on\_atoms}, and
-\texttt{totality\_not\_expressible}---and their finite-support
+\texttt{eval\_depends\_only\_on\_atoms},
+\texttt{totality\_not\_expressible} (expressibility) and
+\texttt{semEq\_iff\_evalBool}, \texttt{decideSemEq},
+\texttt{decideFormEq} (decidability)---together with a derived
+\texttt{DecidableEq} instance and their finite-support
 scaffolding remain.  All definitions, theorem statements, and the
 remaining proofs are ours.
 
@@ -1841,6 +1864,7 @@ Proof files:
   \item \texttt{proofs/TractatusNOperator.lean} --- 239 lines, 11 declarations
   \item \texttt{proofs/TractatusCompleteness.lean} --- 142 lines, 9 declarations
   \item \texttt{proofs/TractatusExpressibility.lean} --- 138 lines, 3 declarations
+  \item \texttt{proofs/TractatusDecidability.lean} --- 148 lines, 3 declarations
 \end{itemize}
 
 % ----------------------------------------------------------------
@@ -1862,7 +1886,7 @@ they can be located in the source files by exact text search.
 \begin{table}[p]
 \centering
 \footnotesize
-\caption{Complete listing of all 77 theorem/lemma declarations
+\caption{Complete listing of all 80 theorem/lemma declarations
   plus 1 axiom, classified by the three-way decomposition.
   \textbf{I}~=~invariant, \textbf{A}~=~assumption/counterexample,
   \textbf{L}~=~limit, \textbf{H}~=~equivalence helper,
@@ -1965,6 +1989,12 @@ they can be located in the source files by exact text search.
 75 & \texttt{expressible\_iff\_iff\_invariant}          & 5       & Expr. & L \\
 76 & \texttt{eval\_depends\_only\_on\_atoms}            & 5       & Expr. & L \\
 77 & \texttt{totality\_not\_expressible}                & 1       & Expr. & L \\
+\midrule
+\multicolumn{5}{l}{\emph{TractatusDecidability.lean} (3 declarations)} \\
+\midrule
+78 & \texttt{semEq\_iff\_evalBool}                      & 4.0141  & Dec. & E \\
+79 & \texttt{decideSemEq}                               & 4.0141  & Dec. & E \\
+80 & \texttt{decideFormEq}                              & 4.0141  & Dec. & E \\
 \midrule
 \multicolumn{5}{l}{\emph{Axiom}} \\
 \midrule

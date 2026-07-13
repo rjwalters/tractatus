@@ -11,6 +11,7 @@ proofs/                  # Lean 4 source
   TractatusNOperator.lean    # N-operator, TLP 5.52 both directions + N-generation completeness toward TLP 6 (239 lines, 11; proofs by Harmonic Aristotle)
   TractatusCompleteness.lean # Full functional completeness, TLP 5.101 (142 lines, 9; proofs by Harmonic Aristotle)
   TractatusExpressibility.lean # Exact expressibility characterization + inexpressibility of totality, TLP 1/5 (138 lines, 3; proofs by Harmonic Aristotle)
+  TractatusDecidability.lean # Decidability of semEq/formEq over finite atoms, TLP 4.0141 (148 lines, 3; proofs by Harmonic Aristotle)
 research/tractatus-ontology/paper/
   tractatus-ontology.{N}/    # Paper versions (immutable)
 ```
@@ -25,7 +26,7 @@ Toolchain `leanprover/lean4:v4.26.0`, mathlib `v4.26.0` (pinned in `lean-toolcha
 lake update && lake exe cache get && lake build
 ```
 
-Expected: zero errors, zero warnings (five `#eval` info lines are intentional demos). CI runs `lake build` on every push (`.github/workflows/ci.yml`). Note: v4.17-era Lean binaries do not run on current macOS; if `lake` resolves to the lean-genius wrapper, use `~/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lake`.
+Expected: zero errors, zero warnings (nine `#eval` info lines are intentional demos: five from `TractatusOntology`, four from `TractatusDecidability`). CI runs `lake build` on every push (`.github/workflows/ci.yml`). Note: v4.17-era Lean binaries do not run on current macOS; if `lake` resolves to the lean-genius wrapper, use `~/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lake`.
 
 ## Paper workflow
 
@@ -47,8 +48,9 @@ cp .build/paper.pdf paper.pdf
 ## Key results
 
 - **Expressibility collapse**: nontrivial propositions cannot express world-independent truths (`saying_showing_triviality`; no `Nonempty S` needed)
-- **Three-way decomposition**: invariants / assumptions / limits across all 77 results
+- **Three-way decomposition**: invariants / assumptions / limits across all 80 results
 - **Equivalence separation**: `structEq` strictly refines both `formEq` and `semEq`; `formEq` and `semEq` are provably **incomparable** (they do NOT form a chain), and `structEq ⊊ formEq ∩ semEq` — witnesses hold for arbitrary `S` with two distinct atoms
+- **Decidability of separation**: over finite atoms both `semEq` and `formEq` are decidable (`decideSemEq`, `decideFormEq`), via the any-atom-type bridge `semEq_iff_evalBool`; the Theorem 5.7 witnesses are checkable by `#eval` at `TwoFacts`. Proofs by Harmonic's Aristotle from our statements.
 - **N-operator settled both ways**: TLP 5.52 proved for finite domains; Geach–Soames critique is a theorem (`no_finite_NOp_for_forall`); full functional completeness (`functional_completeness`, needs `Nonempty S`). N-generation completeness toward TLP 6 (`nGen_complete`): every propositional-fragment proposition is semantically equivalent to one built from the elementaries by iterated N-application. Proofs by Harmonic's Aristotle from our statements (see file headers + paper Acknowledgments).
 - **Exact expressibility + inexpressibility of totality**: over finite atoms a world-property is expressible iff invariant under pointwise-iff agreement (`expressible_iff_iff_invariant`, needs `Nonempty S`); over infinite atoms the TLP 1 totality property `fun w => ∀ s, w s` is invariant yet expressed by no proposition (`totality_not_expressible`), via finite support (`eval_depends_only_on_atoms`). Proofs by Harmonic's Aristotle from our statements.
 - **1 deliberate axiom** (`axiom silence : True`), **0 sorries**
