@@ -1,0 +1,93 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-ontology.11",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {
+      "dimension": "1_rigor_of_method",
+      "score": 6,
+      "max": 6,
+      "critical": false,
+      "justification": "Machine-checked method with honestly scoped modeling decisions; the definitional character of the headline collapse remains confronted in Remark 4.6; v11 diff is three prose edits, leaving the proof base unchanged and re-verified by this pass's artifact gate (fresh lake build, clean)."
+    },
+    {
+      "dimension": "2_evidence_sufficiency",
+      "score": 6,
+      "max": 6,
+      "critical": false,
+      "justification": "80 kernel-verified results, 0 sorries, 1 inert axiom; per-file line/declaration arithmetic exact; the external artifact was rebuilt from scratch under the #663 gate this pass: lake build exit 0, 3068 jobs, exactly the 9 expected #eval demo lines."
+    },
+    {
+      "dimension": "3_clarity_of_contribution",
+      "score": 5,
+      "max": 5,
+      "critical": false,
+      "justification": "Central claim displayed as a one-sentence quote in the introduction; eight numbered one-sentence contributions with section pointers; the compressed ~262-word abstract names every headline result."
+    },
+    {
+      "dimension": "4_related_work_positioning",
+      "score": 5,
+      "max": 5,
+      "critical": false,
+      "justification": "Wehmeier line engaged substantively and accurately in Section 5, complementarity framing now stated once with Section 4.6 reduced to the technical contrast plus a pointer; scherf2025 demoted to 'the most directly comparable attempt' per the v10 note; remaining prior work engaged on its merits."
+    },
+    {
+      "dimension": "5_reproducibility",
+      "score": 5,
+      "max": 5,
+      "critical": false,
+      "justification": "Pinned toolchain, public repo, CI, step-by-step build appendix; this pass executed the reproduction claim end-to-end via the #663 artifact gate (declared lake build, fresh worktree, clean) and reproduced the paper build to a byte-stable .aux fixpoint."
+    },
+    {
+      "dimension": "6_figure_table_quality",
+      "score": 4,
+      "max": 4,
+      "critical": false,
+      "justification": "Both TikZ figures self-contained at caption level, black-only per venue with pattern-based encodings; appendix tables have meaningful headers and booktabs alignment; untouched in v11."
+    },
+    {
+      "dimension": "7_prose_structural_quality",
+      "score": 4,
+      "max": 4,
+      "critical": false,
+      "justification": "Both v10 deductions resolved on the artifact: the mis-drafted 'Neither work' sentence now reads with this paper's development as its unambiguous subject, and the Section 4.3 version-diff leftover is version-agnostic ('The three results of this subsection'). Flow intact, hedging calibrated, render pass clean (0 overfull, 0 broken refs)."
+    },
+    {
+      "dimension": "8_citation_hygiene",
+      "score": 5,
+      "max": 5,
+      "critical": false,
+      "justification": "23/23 cites resolve with no orphans (re-checked); entries complete and consistent; prose claims about sources accurate where checkable against the on-disk references/ notes. The carried-over Fogelin 1976/1987 dating preference (declined this pass in changelog.md) is a convention nit, not a hygiene defect."
+    },
+    {
+      "dimension": "9_rhetorical_economy",
+      "score": 4,
+      "max": 4,
+      "critical": false,
+      "justification": "v10's residual duplication closed: the complementarity framing appears once (Section 5) and Section 4.6 ends in a pointer; abstract stays compressed (~262 words); the conclusion isolates two consequences rather than re-narrating the result set."
+    }
+  ],
+  "findings": [
+    {
+      "severity": "minor",
+      "dimension": "8_citation_hygiene",
+      "evidence_span": "Bibliography, fogelin1987 / Section 5 first prose mention",
+      "rationale": "Carried over from v9/v10, declined in the v11 changelog as out of the operator-directed polish scope: prose credits Fogelin with initiating the debate; the critique first appeared in the 1976 first edition, while the entry cites the 1987 second edition (first edition noted parenthetically).",
+      "suggested_fix": "Cite as Fogelin (1976/1987) at first prose mention during submission mechanics."
+    },
+    {
+      "severity": "nit",
+      "dimension": "4_related_work_positioning",
+      "evidence_span": "Section 5, proof assistants paragraph",
+      "rationale": "With scherf2025 softened to 'the most directly comparable attempt', the closing clause 'demonstrating that complete philosophical systems can be formalized' could be calibrated one notch further for an archive-only artifact.",
+      "suggested_fix": "Optional: 'demonstrating' -> 'suggesting'."
+    }
+  ],
+  "critical_flags": [],
+  "total": 44,
+  "threshold": 35,
+  "verdict": "ADVANCE"
+}

@@ -1,0 +1,20 @@
+{
+  "gate": "artifact_verify",
+  "ran": true,
+  "cwd": "../../../..",
+  "resolved_cwd": "research/tractatus-ontology/paper/tractatus-ontology/../../../..",
+  "timeout_s": 1800,
+  "commands": [
+    {
+      "index": 0,
+      "command": "/Users/rwalters/.elan/toolchains/leanprover--lean4---v4.26.0/bin/lake build",
+      "outcome": "pass",
+      "exit_code": 0,
+      "stdout_tail": "\u2139 [3058/3068] Built TractatusOntology (60s)\ninfo: proofs/TractatusOntology.lean:705:0: true\ninfo: proofs/TractatusOntology.lean:706:0: false\ninfo: proofs/TractatusOntology.lean:707:0: true\ninfo: proofs/TractatusOntology.lean:708:0: false\ninfo: proofs/TractatusOntology.lean:709:0: true\n\u2714 [3059/3068] Built TractatusQuantifiers (17s)\n\u2714 [3060/3068] Built TractatusCompleteness (17s)\n\u2714 [3061/3068] Built TractatusOntologySpectrum (17s)\n\u2714 [3062/3068] Built TractatusOntologyHorn (17s)\n\u2139 [3063/3068] Built TractatusDecidability (18s)\ninfo: proofs/TractatusDecidability.lean:136:0: true\ninfo: proofs/TractatusDecidability.lean:139:0: false\ninfo: proofs/TractatusDecidability.lean:142:0: true\ninfo: proofs/TractatusDecidability.lean:145:0: false\n\u2714 [3064/3068] Built TractatusOntologyEquiv (16s)\n\u2714 [3065/3068] Built TractatusOntologyExclusion (16s)\n\u2714 [3066/3068] Built TractatusExpressibility (16s)\n\u2714 [3067/3068] Built TractatusNOperator (17s)\nBuild completed successfully (3068 jobs).\n",
+      "stderr_tail": ""
+    }
+  ],
+  "pass": true,
+  "open_reason": null,
+  "reasons": []
+}
