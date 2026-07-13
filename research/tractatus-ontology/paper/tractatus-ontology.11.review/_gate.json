@@ -1,0 +1,19 @@
+{
+  "gate": "render_gate",
+  "pdf_path": "research/tractatus-ontology/paper/tractatus-ontology.11/paper.pdf",
+  "log_path": "research/tractatus-ontology/paper/.tractatus-ontology.11.review.tmp/compile-log.txt",
+  "pages": 25,
+  "page_cap": null,
+  "overfull_boxes": [],
+  "overfull_threshold_pt": 5.0,
+  "compile": {
+    "status": "success",
+    "exit_code": 0
+  },
+  "placeholders": [],
+  "findings": [],
+  "pass": true,
+  "reasons": [],
+  "engine_used": null,
+  "template_used": null
+}
