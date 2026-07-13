@@ -12,7 +12,7 @@ proofs/                  # Lean 4 source
   TractatusCompleteness.lean # Full functional completeness, TLP 5.101 (142 lines, 9; proofs by Harmonic Aristotle)
   TractatusExpressibility.lean # Exact expressibility characterization + inexpressibility of totality, TLP 1/5 (138 lines, 3; proofs by Harmonic Aristotle)
   TractatusDecidability.lean # Decidability of semEq/formEq over finite atoms, TLP 4.0141 (148 lines, 3; proofs by Harmonic Aristotle)
-  TractatusOntologyHorn.lean # Generic HornModel constructor + exact independence boundary horn_realizable_iff, TLP 2.061 (174 lines, 8; ported from lean-genius, horn_realizable_iff proof by Harmonic Aristotle)
+  TractatusOntologyHorn.lean # Generic HornModel constructor + exact independence boundary horn_realizable_iff + per-valuation boundary horn_valuation_realizable_iff, TLP 2.061 (212 lines, 9; ported from lean-genius, horn_realizable_iff proof by Harmonic Aristotle, horn_valuation_realizable_iff by Claude for issue #5)
   TractatusOntologySpectrum.lean # Refinement preorder on WorldModel, freeModel as maximum + uniqueness, oq-06 (472 lines, 37; ported from lean-genius)
   TractatusOntologyEquiv.lean # EquivModel via symmetric Horn closure (T1b ⊆ T1a-symmetric) (145 lines, 6; ported from lean-genius)
   TractatusOntologyExclusion.lean # Exclusion tier: exclusion_realizable_iff + exclusion_not_horn, color exclusion TLP 6.3751 (236 lines, 12; new for the follow-up paper)

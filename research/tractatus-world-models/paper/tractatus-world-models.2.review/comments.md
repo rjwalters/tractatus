@@ -1,0 +1,26 @@
+# Line-level comments — tractatus-world-models.2
+
+Keyed to sections of `main.tex` (single-file paper; `resolve_tex_inputs` found no `\input`/`\include` children and no missing targets). Grouped by severity.
+
+## blocker
+
+- **§4, Theorem 4.3 (`thm:horn-boundary`); echoed in §1 item (C4).** Excerpt: "A Boolean valuation $v : S \to \mathrm{Bool}$ is the profile of some world of $\mathrm{Horn}(S, \mathit{cs})$ iff $v$ satisfies every clause: for all $(a, b) \in \mathit{cs}$, if $v(a)$ then $v(b)$. (Lean: \lean{horn\_realizable\_iff}.)" — The cited Lean declaration proves a different theorem. `proofs/TractatusOntologyHorn.lean` (verified this pass, lines 128–140): `(∀ assignment : S → Prop, ∃ w : HornModel S cs, ∀ s, w.val s ↔ assignment s) ↔ (∀ c ∈ cs, c.1 = c.2)` — a *global* biconditional ("every assignment is realizable iff every clause is trivial"), not the printed *per-valuation* boundary. No declaration proving the per-valuation Horn statement exists in any of the four modules; the per-valuation shape exists only on the exclusion side (`exclusion_realizable_iff`), which is presumably how the transposition arose. Because §1 asserts "Every result above is formalized in Lean~4 \cite{moura2021} and checked by its kernel," Theorem 4.3 is a kernel-checked-claim the kernel did not check. **Fix (either):** (a) restate Thm 4.3 to match the Lean statement — arguably the sharper TLP 2.061 rendering: independence survives iff the clause list says nothing — and rewrite the contrapositive gloss that follows plus intro item (C4); or (b) add the per-valuation Horn lemma to the artifact (a few lines, mirroring `exclusion_realizable_iff`) and cross-reference the new declaration name in Thm 4.3 and Appendix A.
+
+## major
+
+- **§5, proof sketch of Theorem 5.4.** Excerpt: "The kernel-checked proof is nine lines." — The proof body of `exclusion_not_horn` is 6 tactic lines (11 lines including the statement); no counting convention yields nine. This is a checkable factual claim about the artifact; reword ("six lines" / "a few lines").
+- **Figure 1 caption (§1).** Excerpt: "The Horn and exclusion tiers are refinement-incomparable: no Horn model shares a nontrivial exclusion model's image profiles" — "refinement-incomparable" overstates Theorem 5.4: every model (including every exclusion model) refines into $\mathrm{Horn}(S, [\,]) = $ the free model, so the tiers are comparable in one direction. The theorem is failure of refinement-*equivalence*; the figure artwork itself carries the correct label ("no refinement equivalence"). Align the caption with the artwork and the theorem.
+- **§1 / §6.5 / Appendix A (reproducibility).** Excerpt: "All declarations reside in the \lean{tractatus} repository" — this is the paper's only artifact locator; there is no URL, DOI, or archival reference, and `companion2026` is `@unpublished`. Add a resolvable artifact link (repository URL + commit hash, or a Zenodo-style archive) before submission; Synthese referees increasingly expect it for machine-checked claims.
+
+## minor
+
+- **§5 display + LaTeX hygiene (dim 7).** 6 overfull hboxes over the 5pt gate threshold in the compile log: worst 121.5pt at "$\mathrm{colorModel} = \mathrm{Excl}(S, [(\mathrm{red}, \mathrm{green})])$." (§5); 75.3pt at the Appendix module-path line ("\lean{proofs/TractatusOntology\{Horn,Equiv,Spectrum,Exclusion\}.lean}"); 73.2pt near Definition 2.3. Break the display, allow line-breaking in the module path, and re-check the log to zero >5pt boxes.
+- **§1, Hacker quotation.** Excerpt: "collapsed over its inability to solve one problem --- colour exclusion" — direct quotation with no page number. Verify wording against Hacker (1986) and add the page reference.
+- **§4 (lattice section), TLP 3.42 quotation.** Excerpt: "a proposition can determine only one place in logical space, but the whole of logical space must already be given by it" — the Pears–McGuinness translation reads "...logical space: nevertheless the whole of logical space..."; verify against the cited translation and correct the wording inside quotation marks.
+- **`refs.bib` unused entries** `lokhorst1988`, `spinney2022`, `weiss2017` (defined, never cited). [related-work] Spinney 2022 is the BRIEF's stated Synthese venue precedent on logical form and logical space; Lokhorst 1988 is a prior *formal reconstruction* of the Tractatus ontology — both are close enough that a referee may ask why they are absent from the positioning sections. Recommend citing both (a sentence each in §6 suffices) or deliberately dropping them from `refs.bib`; a `pub-litsearch` pass would settle placement.
+- **`refs.bib`, `evans2014`.** The arXiv identifier is folded into the `journal` field ("arXiv preprint arXiv:1411.7158"); acceptable under `plain.bst` but better as `@misc` with `eprint`/`archivePrefix` or a `note`, per current bibliography practice.
+
+## nit
+
+- **Title block.** `\date{July 2026 \quad\textbar\quad Draft v2}` — drop the draft marker for the submission copy.
+- **Procedural.** Render-gate ran against `main.pdf` (the audit's build artifact) rather than the command doc's literal `paper.pdf` path — see `findings.md` and migration note F13. Numeric-consistency and evidence-check automated passes both ran (no manual fallback needed).

@@ -1,0 +1,107 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-world-models.3",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {
+      "dimension": "1_rigor_of_method",
+      "score": 6,
+      "max": 6,
+      "justification": "v2 blocker repaired at the artifact: Theorem 5.3 (thm:horn-boundary) now cites horn_valuation_realizable_iff, which exists (proofs/TractatusOntologyHorn.lean:167-176, verified this pass), states exactly the printed per-valuation boundary, and depends on no axioms per #print axioms. The added global-form sentence correctly describes horn_realizable_iff. Method sound throughout; no artifact-unbacked theorem statement found.",
+      "evidence_span": "main.tex §5, Theorem 5.3; proofs/TractatusOntologyHorn.lean:137-176"
+    },
+    {
+      "dimension": "2_evidence_sufficiency",
+      "score": 6,
+      "max": 6,
+      "justification": "64 declarations / 1,064 lines verified exactly this pass (37+9+6+12; wc -l 472+212+145+235); lake build re-run clean with the 9 documented #eval lines; 'six lines' proof-length claim now matches exclusion_not_horn's 6 tactic lines. Every headline claim has its kernel-checked witness.",
+      "evidence_span": "main.tex §1, §5, §6; proofs/TractatusOntology{Spectrum,Horn,Equiv,Exclusion}.lean"
+    },
+    {
+      "dimension": "3_clarity_of_contribution",
+      "score": 5,
+      "max": 5,
+      "justification": "Contributions enumerated (C1)-(C5), one extractable sentence each; central separation result crisp in abstract and intro; (C4) now accurately advertises both the per-valuation and global boundary forms.",
+      "evidence_span": "main.tex abstract; §1 items (C1)-(C5)"
+    },
+    {
+      "dimension": "4_related_work_positioning",
+      "score": 5,
+      "max": 5,
+      "justification": "Button, Moss, Armstrong/Skyrms, Evans-Berger, McKinsey/Horn, Benzmueller engaged on actual merits; v2 gap closed — Lokhorst and Weiss positioned as closest precedents in §7.5, Spinney 2022 engaged in the §4 footnote. 17/17 bib entries cited; no known close prior work missing. No litsearch sibling (legacy baseline, no deduction).",
+      "evidence_span": "main.tex §4 footnote, §7; refs.bib"
+    },
+    {
+      "dimension": "5_reproducibility",
+      "score": 4,
+      "max": 5,
+      "justification": "Resolvable URL now printed in §1, Appendix A, and the bib note, with toolchain pin (Lean 4.26) and per-theorem index. Residual weakness: no commit hash / tagged release / archival DOI, and the newly cited horn_valuation_realizable_iff exists only on the unpushed feature/issue-5 branch at review time — the public URL does not yet serve the cited declaration (must merge before submission).",
+      "evidence_span": "main.tex §1, Appendix A; refs.bib companion2026"
+    },
+    {
+      "dimension": "6_figure_table_quality",
+      "score": 4,
+      "max": 4,
+      "justification": "Caption now reads 'not refinement-equivalent', matching Theorem 6.5 and the artwork's own 'no refinement equivalence' label (figure rendered and inspected: legible, black-only, print-safe). Appendix booktabs index clean with the widest row split across two lines.",
+      "evidence_span": "main.tex Figure 1 caption; figures/spectrum.pdf; Appendix A"
+    },
+    {
+      "dimension": "7_prose_structural_quality",
+      "score": 4,
+      "max": 4,
+      "justification": "Flow intact, prose disciplined; LaTeX hygiene verified by independent from-scratch compile: 0 overfull hboxes (any threshold), 0 errors, 0 undefined refs/cites, 10 pages. Draft marker dropped from \\date.",
+      "evidence_span": "scratch compile log (pdflatex/bibtex/pdflatex x3); main.tex preamble \\emergencystretch"
+    },
+    {
+      "dimension": "8_citation_hygiene",
+      "score": 5,
+      "max": 5,
+      "justification": "17/17 keys resolve with complete fields (cited set == bib set; bibtex 0 errors/warnings); Hacker claim now indirect quotation without invented locator; TLP 3.42 paraphrased outside quotation marks; evans2014 proper @misc with eprint/archivePrefix; proper-noun case protection added.",
+      "evidence_span": "main.tex §1, §4; refs.bib"
+    },
+    {
+      "dimension": "9_rhetorical_economy",
+      "score": 4,
+      "max": 4,
+      "justification": "Ten pages, every section load-bearing, hedging proportional (Limitations concedes binary clauses, fixed atomization); contribution extractable from abstract + (C1)-(C5) in under 90 seconds.",
+      "evidence_span": "main.tex passim; §8 Limitations"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "major",
+      "dimension": "5_reproducibility",
+      "evidence_span": "main.tex §1 (artifact paragraph), Appendix A; proofs/TractatusOntologyHorn.lean on feature/issue-5",
+      "rationale": "The printed repository URL resolves, but horn_valuation_realizable_iff — the Lean anchor of Theorem 5.3 — exists only on the unpushed feature/issue-5 branch at review time; a referee following the URL today finds a Horn module without the cited theorem. No commit hash / tag / DOI pins the reviewed state.",
+      "suggested_fix": "Verify the merge lands the lemma on the public default branch before submission; add a commit hash, tagged release, or Zenodo-style DOI to the artifact paragraph and Appendix A."
+    },
+    {
+      "severity": "minor",
+      "dimension": "2_evidence_sufficiency",
+      "evidence_span": "tractatus-world-models/BRIEF.md (Experiments section)",
+      "rationale": "Thread-root BRIEF.md still says '63 declarations'; the paper correctly says 64. BRIEF is reviser input, not part of the reviewable document, so no flag and no deduction — but the drift will mislead a future pass that trusts the BRIEF's evidence inventory.",
+      "suggested_fix": "Update the BRIEF's Experiments section to 64 declarations / 1,064 lines when the thread is next touched."
+    },
+    {
+      "severity": "nit",
+      "dimension": "6_figure_table_quality",
+      "evidence_span": "main.tex Figure 1 caption",
+      "rationale": "'no Horn model shares a nontrivial exclusion model's image profiles' can be misread as 'shares any profile' (false — e.g. the all-false profile is common); the theorem is inequality of profile sets.",
+      "suggested_fix": "Consider 'no Horn model realizes exactly the image profiles of a nontrivial exclusion model'."
+    },
+    {
+      "severity": "nit",
+      "dimension": "7_prose_structural_quality",
+      "evidence_span": "review procedure",
+      "rationale": "Procedural: render gate skipped fail-open (no PDF/compile-log for v3; pub-audit not yet run); reviewer compensated with an independent from-scratch compile (clean). Numeric-consistency and evidence-check automated passes both ran (no manual fallback).",
+      "suggested_fix": "Run pub-audit on v3 to produce the canonical PDF + compile log."
+    }
+  ],
+  "critical_flags": [],
+  "total": 43,
+  "threshold": 35,
+  "verdict": "ADVANCE"
+}
