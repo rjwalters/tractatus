@@ -18,6 +18,12 @@
         "total": 35,
         "threshold": 35,
         "rubric_id": "anvil-pub-v2"
+      },
+      {
+        "iteration": 3,
+        "total": 43,
+        "threshold": 35,
+        "rubric_id": "anvil-pub-v2"
       }
     ]
   }

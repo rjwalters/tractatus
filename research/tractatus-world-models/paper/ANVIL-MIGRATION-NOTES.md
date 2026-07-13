@@ -197,3 +197,27 @@ will see a benign rerun hint on an otherwise clean document; a `\pageref`-using 
 could even ship a stale page number. Upstream fix: make the compile contract "run
 until the rerun warning disappears (max 5 passes)" — latexmk semantics — instead of a
 fixed count.
+
+## Review-phase friction (pub-review v3 run, 2026-07-13)
+
+## F16. `python -m anvil.lib.sidecar` CLI shim emits a runpy RuntimeWarning on every invocation
+
+Every `uv run --project .anvil python -m anvil.lib.sidecar {cleanup,stage,commit}` call
+prints `<frozen runpy>:130: RuntimeWarning: 'anvil.lib.sidecar' found in sys.modules
+after import of package 'anvil.lib', but prior to execution of 'anvil.lib.sidecar'...`.
+Harmless (all three subcommands behaved correctly this run), but it lands on stderr on
+every atomicity-critical call, training operators to ignore warnings from exactly the
+tool whose failures matter most. Upstream fix: ship a console-script entry point (or
+move the CLI into `anvil/lib/sidecar/__main__.py`) so the module import and the runpy
+execution do not collide.
+
+## F17. Agent-harness output-file guard intercepted the required `findings.md` write; documented shell-redirect fallback exercised
+
+As anticipated by `commands/pub-review.md`'s orchestrator note (issue #381 /
+`anvil/lib/snippets/critics.md` §"Orchestrator output-file guard collisions"), the
+review agent's file-write tool refused to create `findings.md` inside the staging dir
+("Subagents should return findings as text, not write report files"). The documented
+collision clause was followed: `findings.md` was written via a shell heredoc redirect
+into the staging path and the manifest committed normally. No content impact; recorded
+so future review runs in this repo go straight to the redirect instead of retrying the
+write tool.
