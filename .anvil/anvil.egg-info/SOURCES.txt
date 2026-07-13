@@ -39,3 +39,6 @@ anvil/lib/vocab_reminder.py
 anvil/lib/figures/__init__.py
 anvil/lib/figures/palette.py
 anvil/skills/__init__.py
+anvil/skills/pub/__init__.py
+anvil/skills/pub/lib/__init__.py
+anvil/skills/pub/lib/artifact_verify.py
