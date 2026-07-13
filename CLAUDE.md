@@ -15,6 +15,9 @@ proofs/                  # Lean 4 source
   TractatusOntologyHorn.lean # Generic HornModel constructor + exact independence boundary horn_realizable_iff, TLP 2.061 (174 lines, 8; ported from lean-genius, horn_realizable_iff proof by Harmonic Aristotle)
   TractatusOntologySpectrum.lean # Refinement preorder on WorldModel, freeModel as maximum + uniqueness, oq-06 (472 lines, 37; ported from lean-genius)
   TractatusOntologyEquiv.lean # EquivModel via symmetric Horn closure (T1b ⊆ T1a-symmetric) (145 lines, 6; ported from lean-genius)
+  TractatusOntologyExclusion.lean # Exclusion tier: exclusion_realizable_iff + exclusion_not_horn, color exclusion TLP 6.3751 (236 lines, 12; new for the follow-up paper)
+research/tractatus-world-models/paper/
+  tractatus-world-models.{N}/ # Follow-up paper versions (immutable): Independence as a Modeling Choice, target Synthese (issue #5)
 research/tractatus-ontology/paper/
   tractatus-ontology.{N}/    # Paper versions (immutable)
 ```
