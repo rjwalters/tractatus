@@ -135,7 +135,7 @@ These results yield a formal decomposition of the \emph{Tractatus}
 into invariants, assumptions, and limits, and provide a precise
 characterization of the saying/showing distinction as a theorem
 about expressibility in truth-functional languages.
-The formalization comprises 2,071 lines of \Lean~4, proves 74
+The formalization comprises 2,148 lines of \Lean~4, proves 77
 formally verified results with 0 \texttt{sorry} obligations
 and 1 deliberate axiom (\texttt{axiom silence : True}, encoding
 TLP~7).%
@@ -267,7 +267,7 @@ The specific contributions of this paper are:
     many atoms the totality property of TLP~1 is invariant yet
     expressed by no proposition---a finite/infinite dichotomy
     turning on finite support (Section~\ref{sec:whatcanbesaid}).
-  \item A three-way decomposition of all 74 formalized results
+  \item A three-way decomposition of all 77 formalized results
     into invariants, assumptions, and limits
     (Table~\ref{tab:decomposition}, Appendix~\ref{app:theorems}).
   \item A first-order extension using higher-order abstract syntax,
@@ -276,11 +276,11 @@ The specific contributions of this paper are:
 \end{enumerate}
 
 \noindent
-The formalization comprises 2,071 lines of \Lean~4 across five
+The formalization comprises 2,148 lines of \Lean~4 across five
 files.\footnote{%
   \texttt{TractatusOntology.lean} (1,345 lines, 45 theorem/lemma
   declarations), \texttt{TractatusQuantifiers.lean} (284 lines, 9),
-  \texttt{TractatusNOperator.lean} (162 lines, 8),
+  \texttt{TractatusNOperator.lean} (239 lines, 11),
   \texttt{TractatusCompleteness.lean} (142 lines, 9), and
   \texttt{TractatusExpressibility.lean} (138 lines, 3), plus 1
   deliberate axiom.  Appendix~\ref{app:theorems} lists every
@@ -1396,9 +1396,51 @@ This sharpens the dialectic of the expressive-completeness
 debate: what Geach and Soames urged informally is, in this
 reconstruction, a short countermodel.  What the theorem does
 \emph{not} settle is Wittgenstein's own intent---whether
-TLP~5.52's ``all values'' was ever meant as a finitary list
-(cf.\ the form-series of TLP~6, which we do not formalize; see
-Section~\ref{sec:limitations}).
+TLP~5.52's ``all values'' was ever meant as a finitary list.
+
+\paragraph{Iterated $N$: TLP~6.}
+The results above concern a \emph{single} $N$-application.
+TLP~6 makes a stronger claim: every proposition arises from
+the elementary propositions by \emph{successive} applications
+of $N$.  We formalize the closure of the elementaries under
+$N$ as an inductive predicate $\mathtt{NGen}$---the base case
+is any elementary proposition, and the step case closes under
+$\mathtt{NOp}\;p\;ps$ for $N$-generated $p$ and $ps$---and
+prove that this closure exhausts the propositional fragment
+up to semantic equivalence.
+
+\begin{theorem}[$N$-generation completeness, TLP~6]
+\label{thm:ngen}
+For every proposition $p$ there is a proposition $q$ with
+$\mathtt{NGen}\;q$ and $q \semEq p$: every proposition is
+semantically equivalent to one built from elementary
+propositions by iterated $N$-application
+(\texttt{nGen\_complete}).
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Induct on $p$.  An elementary proposition is $N$-generated
+outright.  For $\lnot p$, take $N(q_p)$ where $q_p$ generates
+$p$; unary $N$ is negation (\texttt{neg\_via\_NOp}), and
+semantic equivalence is a congruence for $\lnot$
+(\texttt{semEq\_neg\_congr}).  For $p \land r$, take
+$N(N(q_p), N(q_r))$; this is conjunction
+(\texttt{conj\_via\_NOp}), and semantic equivalence is a
+congruence for $\land$ (\texttt{semEq\_conj\_congr}).
+\end{proof}
+
+\noindent
+Combined with functional completeness
+(Theorem~\ref{thm:fc}), the reach of iterated
+joint denial is now exact: every truth-function over finitely
+many atoms is realized by some proposition, and that
+proposition is in turn semantically equivalent to one
+generated from the elementaries by successive $N$.  This is
+TLP~6's ``successive applications'' claim for the
+propositional fragment, up to semantic equivalence.  What
+remains open is the form-series \emph{notation}
+$[\bar{p}, \bar{\xi}, N(\bar{\xi})]$ of TLP~6 itself and its
+infinitary reading (see Section~\ref{sec:limitations}).
 
 % ================================================================
 \section{Related Work}
@@ -1566,14 +1608,20 @@ independence a substantive theorem rather than a definitional
 consequence.
 
 \paragraph{The form-series.}
-The $N$-operator itself is now formalized
-(Section~\ref{sec:noperator}), but Wittgenstein's full
-claim---that all propositions arise by \emph{successive}
-applications of $N$ along a form-series
-(TLP~6, $[\bar{p}, \bar{\xi}, N(\bar{\xi})]$)---is not.  Our
-results concern a single $N$-application over a list of
-arguments; iterated application and the form-series notation
-remain open.
+The $N$-operator is formalized
+(Section~\ref{sec:noperator}), and Wittgenstein's claim that
+all propositions arise by \emph{successive} applications of
+$N$ now holds for the propositional fragment up to semantic
+equivalence: every proposition is semantically equivalent to
+one generated from the elementaries by iterated $N$
+(Theorem~\ref{thm:ngen}).  What remains open is the
+form-series \emph{notation} of TLP~6 itself,
+$[\bar{p}, \bar{\xi}, N(\bar{\xi})]$, together with its
+infinitary reading---the recursive schema in which the same
+operation is applied to its own results without bound.  Our
+$\mathtt{NGen}$ closure is finitary and unstructured (a mere
+inductive predicate), not Wittgenstein's indexed general form
+of the proposition.
 
 \paragraph{The picture theory.}
 The \emph{Tractatus}'s claim that propositions are
@@ -1658,10 +1706,13 @@ formalization must respect.
 % ----------------------------------------------------------------
 
 Several directions for further investigation arise naturally.
-First, formalizing iterated $N$-application along a form-series
-(TLP~6) would extend the single-application results of
-Section~\ref{sec:noperator} to Wittgenstein's general
-propositional form.
+First, with iterated $N$-application now settled up to
+semantic equivalence (Theorem~\ref{thm:ngen}), the remaining
+form-series work is to formalize TLP~6's general propositional
+form $[\bar{p}, \bar{\xi}, N(\bar{\xi})]$ as an indexed
+recursive schema---and to give its infinitary reading a
+coherent semantics---rather than the finitary, unstructured
+$\mathtt{NGen}$ closure we prove complete here.
 Second, encoding object structure via dependent types---so
 that states of affairs are typed combinations of objects
 constrained by form (TLP~2.0141)---would make independence
@@ -1691,7 +1742,7 @@ the decomposition.
 
 We have presented a machine-checked reconstruction of the
 semantic core of \emph{Tractatus Logico-Philosophicus} in
-\Lean~4.  The formalization proves 74 formally verified results
+\Lean~4.  The formalization proves 77 formally verified results
 across five files, decomposes the
 \emph{Tractatus} into structural invariants, model-dependent
 assumptions, and formal limits of expressibility, and
@@ -1787,7 +1838,7 @@ Proof files:
 \begin{itemize}[nosep]
   \item \texttt{proofs/TractatusOntology.lean} --- 1,345 lines, 45 declarations
   \item \texttt{proofs/TractatusQuantifiers.lean} --- 284 lines, 9 declarations
-  \item \texttt{proofs/TractatusNOperator.lean} --- 162 lines, 8 declarations
+  \item \texttt{proofs/TractatusNOperator.lean} --- 239 lines, 11 declarations
   \item \texttt{proofs/TractatusCompleteness.lean} --- 142 lines, 9 declarations
   \item \texttt{proofs/TractatusExpressibility.lean} --- 138 lines, 3 declarations
 \end{itemize}
@@ -1811,7 +1862,7 @@ they can be located in the source files by exact text search.
 \begin{table}[p]
 \centering
 \footnotesize
-\caption{Complete listing of all 74 theorem/lemma declarations
+\caption{Complete listing of all 77 theorem/lemma declarations
   plus 1 axiom, classified by the three-way decomposition.
   \textbf{I}~=~invariant, \textbf{A}~=~assumption/counterexample,
   \textbf{L}~=~limit, \textbf{H}~=~equivalence helper,
@@ -1883,7 +1934,7 @@ they can be located in the source files by exact text search.
 53 & \texttt{not\_exists\_forall\_not}                   & 5.52    & Quant. & I \\
 54 & \texttt{fo\_bivalence}                              & 4.023   & Quant. & I \\
 \midrule
-\multicolumn{5}{l}{\emph{TractatusNOperator.lean} (8 declarations)} \\
+\multicolumn{5}{l}{\emph{TractatusNOperator.lean} (11 declarations)} \\
 \midrule
 55 & \texttt{NOp\_eval}                                 & 5.502   & NOp. & I \\
 56 & \texttt{NOpFO\_eval}                               & 5.502   & NOp. & I \\
@@ -1893,24 +1944,27 @@ they can be located in the source files by exact text search.
 60 & \texttt{forall\_as\_NOpFO}                         & 5.52    & NOp. & I \\
 61 & \texttt{exists\_as\_NOpFO}                         & 5.52    & NOp. & I \\
 62 & \texttt{no\_finite\_NOp\_for\_forall}              & 5.52    & NOp. & L \\
+63 & \texttt{semEq\_neg\_congr}                         & 6       & NOp. & H \\
+64 & \texttt{semEq\_conj\_congr}                        & 6       & NOp. & H \\
+65 & \texttt{nGen\_complete}                            & 6       & NOp. & I \\
 \midrule
 \multicolumn{5}{l}{\emph{TractatusCompleteness.lean} (9 declarations)} \\
 \midrule
-63 & \texttt{disj\_evalBool}                            & 5.101   & Comp. & E \\
-64 & \texttt{literal\_evalBool}                         & 5.101   & Comp. & E \\
-65 & \texttt{truePropOf\_evalBool}                      & 5.101   & Comp. & E \\
-66 & \texttt{falsePropOf\_evalBool}                     & 5.101   & Comp. & E \\
-67 & \texttt{conjFold\_evalBool}                        & 5.101   & Comp. & E \\
-68 & \texttt{minterm\_evalBool}                         & 5.101   & Comp. & E \\
-69 & \texttt{bigDisj\_evalBool}                         & 5.101   & Comp. & E \\
-70 & \texttt{dnf\_evalBool}                             & 5.101   & Comp. & E \\
-71 & \texttt{functional\_completeness}                  & 5.101   & Comp. & I \\
+66 & \texttt{disj\_evalBool}                            & 5.101   & Comp. & E \\
+67 & \texttt{literal\_evalBool}                         & 5.101   & Comp. & E \\
+68 & \texttt{truePropOf\_evalBool}                      & 5.101   & Comp. & E \\
+69 & \texttt{falsePropOf\_evalBool}                     & 5.101   & Comp. & E \\
+70 & \texttt{conjFold\_evalBool}                        & 5.101   & Comp. & E \\
+71 & \texttt{minterm\_evalBool}                         & 5.101   & Comp. & E \\
+72 & \texttt{bigDisj\_evalBool}                         & 5.101   & Comp. & E \\
+73 & \texttt{dnf\_evalBool}                             & 5.101   & Comp. & E \\
+74 & \texttt{functional\_completeness}                  & 5.101   & Comp. & I \\
 \midrule
 \multicolumn{5}{l}{\emph{TractatusExpressibility.lean} (3 declarations)} \\
 \midrule
-72 & \texttt{expressible\_iff\_iff\_invariant}          & 5       & Expr. & L \\
-73 & \texttt{eval\_depends\_only\_on\_atoms}            & 5       & Expr. & L \\
-74 & \texttt{totality\_not\_expressible}                & 1       & Expr. & L \\
+75 & \texttt{expressible\_iff\_iff\_invariant}          & 5       & Expr. & L \\
+76 & \texttt{eval\_depends\_only\_on\_atoms}            & 5       & Expr. & L \\
+77 & \texttt{totality\_not\_expressible}                & 1       & Expr. & L \\
 \midrule
 \multicolumn{5}{l}{\emph{Axiom}} \\
 \midrule
