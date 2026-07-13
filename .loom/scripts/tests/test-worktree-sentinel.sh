@@ -161,6 +161,89 @@ if [[ "$result" == "skip:env" ]]; then pass "LOOM_PRESERVE_WORKTREE=1 short-circ
 
 rm -rf "$CASE_DIR"
 
+# --- Test 5: re-invocation restores a missing sentinel (issue #11) ---
+#
+# Regression for #11: worktree.sh's "worktree already exists" early-exit
+# branches (preserve-existing-work, stale-worktree reset) return before the
+# first-creation sentinel write. A worktree whose sentinel is missing (e.g.
+# a Builder resume, a Doctor re-run, or a worktree created before the sentinel
+# write on an interrupted first invocation) must have the marker backfilled on
+# re-invocation, or merge-pr.sh's cleanup gate (merge-pr.sh:644) strands it.
+echo ""
+echo "Test 5: re-invocation backfills a missing .loom-managed sentinel (#11)"
+
+# Use a canonical (non-symlinked) tmp base. On macOS `/tmp` is a symlink to
+# `/private/tmp`; `git worktree list --porcelain` records the path as given
+# while worktree.sh's orphan check resolves it via `cd && pwd`, so a `/tmp`
+# base makes a registered worktree spuriously look orphaned and get recreated
+# — which would mask the very preserve/reset branches this test must exercise.
+# Real Loom roots (e.g. /Volumes/Stripe) are canonical, so mirror that here.
+TMP5_BASE="${TMPDIR:-/tmp}"
+TMP5_BASE="$(cd "$TMP5_BASE" && pwd -P)"
+TMP5=$(mktemp -d "$TMP5_BASE/loom-sentinel-reinvoke.XXXXXX")
+TMP5="$(cd "$TMP5" && pwd -P)"
+trap 'rm -rf "$TMP5"; rm -rf "$TMP"; cd "$REPO_ROOT" 2>/dev/null || true' EXIT
+
+git init -q -b main "$TMP5/origin.git" --bare
+git init -q -b main "$TMP5/repo"
+cd "$TMP5/repo"
+git config user.email t@t
+git config user.name t
+git commit --allow-empty -q -m init
+git remote add origin "$TMP5/origin.git"
+git push -q origin main
+
+mkdir -p .loom/scripts/lib
+cp "$WORKTREE_SH" .loom/scripts/worktree.sh
+if [[ -d "$SCRIPTS_DIR/lib" ]]; then
+    cp -R "$SCRIPTS_DIR"/lib/* .loom/scripts/lib/ 2>/dev/null || true
+fi
+chmod +x .loom/scripts/worktree.sh
+
+R_ISSUE=77
+WT=".loom/worktrees/issue-$R_ISSUE"
+
+# 5a. First invocation creates the worktree with a sentinel.
+./.loom/scripts/worktree.sh "$R_ISSUE" >/tmp/wt-reinvoke-1.$$ 2>&1 || true
+assert_file_exists "$WT/.loom-managed" "5a: first invocation writes sentinel"
+
+# 5b. Preserve-existing-work path: give the worktree a commit ahead of main,
+# delete the sentinel (simulating the pre-fix stranded state), re-invoke, and
+# confirm the sentinel is restored on the preserve branch.
+( cd "$WT" && git commit --allow-empty -q -m "work ahead of main" )
+rm -f "$WT/.loom-managed"
+[[ ! -f "$WT/.loom-managed" ]] && pass "5b: sentinel deleted to simulate stranded worktree" || fail "5b: could not delete sentinel"
+./.loom/scripts/worktree.sh "$R_ISSUE" >/tmp/wt-reinvoke-2.$$ 2>&1 || true
+assert_grep "preserving existing work" "/tmp/wt-reinvoke-2.$$" \
+    "5b: re-invocation took the preserve-existing-work branch"
+assert_file_exists "$WT/.loom-managed" \
+    "5b: sentinel restored on the preserve-existing-work re-invocation path"
+# The preserved commit must NOT have been discarded.
+if ( cd "$WT" && [[ "$(git rev-list --count origin/main..HEAD)" -ge 1 ]] ); then
+    pass "5b: existing work preserved (commit still ahead of main)"
+else
+    fail "5b: existing work was lost on re-invocation"
+fi
+
+# 5c. Stale-worktree reset path: drop the ahead commit so the worktree is
+# stale (0 ahead, clean), delete the sentinel, re-invoke, confirm restore.
+( cd "$WT" && git reset --hard origin/main >/dev/null 2>&1 )
+rm -f "$WT/.loom-managed"
+./.loom/scripts/worktree.sh "$R_ISSUE" >/tmp/wt-reinvoke-3.$$ 2>&1 || true
+assert_file_exists "$WT/.loom-managed" \
+    "5c: sentinel restored on the stale-worktree reset re-invocation path"
+
+# 5d. The restored sentinel must satisfy merge-pr.sh's cleanup gate, i.e. the
+# exact predicate at merge-pr.sh:644 ([[ ! -f <wt>/.loom-managed ]] → refuse).
+if [[ -f "$WT/.loom-managed" ]]; then
+    pass "5d: merge-pr.sh cleanup gate would ACCEPT the worktree (sentinel present)"
+else
+    fail "5d: merge-pr.sh cleanup gate would REFUSE (sentinel absent)"
+fi
+
+rm -f /tmp/wt-reinvoke-1.$$ /tmp/wt-reinvoke-2.$$ /tmp/wt-reinvoke-3.$$
+cd "$REPO_ROOT"
+
 # --- Summary ---
 echo ""
 echo "Tests run: $TESTS_RUN, Passed: $TESTS_PASSED, Failed: $TESTS_FAILED"
