@@ -244,6 +244,78 @@ fi
 rm -f /tmp/wt-reinvoke-1.$$ /tmp/wt-reinvoke-2.$$ /tmp/wt-reinvoke-3.$$
 cd "$REPO_ROOT"
 
+# --- Test 6: default-branch detection on a MASTER-named repo (issue #15) ---
+#
+# worktree.sh previously hardcoded `origin/main`, so `git worktree add` failed
+# with `fatal: invalid reference: origin/main` on any repo whose default branch
+# is `master` (this repo's reality — see #13/#14/#11). This test builds a
+# throwaway repo whose ONLY branch is `master` (no `main` anywhere, origin/HEAD
+# unset — the fresh-clone-in-a-sandbox shape) and asserts worktree.sh succeeds
+# without manual patching and bases the branch on master.
+echo ""
+echo "Test 6: worktree.sh succeeds on a master-default repo (#15)"
+
+# Canonical (non-symlinked) tmp base — same rationale as Test 5 (macOS /tmp
+# symlink makes registered worktrees spuriously look orphaned).
+TMP6_BASE="${TMPDIR:-/tmp}"
+TMP6_BASE="$(cd "$TMP6_BASE" && pwd -P)"
+TMP6=$(mktemp -d "$TMP6_BASE/loom-default-branch.XXXXXX")
+TMP6="$(cd "$TMP6" && pwd -P)"
+trap 'rm -rf "$TMP6"; rm -rf "$TMP5"; rm -rf "$TMP"; cd "$REPO_ROOT" 2>/dev/null || true' EXIT
+
+# Build a repo whose default branch is `master` (NOT main). origin/HEAD is left
+# unset (as in a bare-remote push), so detection must fall through to
+# `ls-remote --symref` / the master probe — exactly the fresh-clone case.
+git init -q -b master "$TMP6/origin.git" --bare
+git init -q -b master "$TMP6/repo"
+cd "$TMP6/repo"
+git config user.email t@t
+git config user.name t
+git commit --allow-empty -q -m init
+git remote add origin "$TMP6/origin.git"
+git push -q origin master
+
+mkdir -p .loom/scripts/lib
+cp "$WORKTREE_SH" .loom/scripts/worktree.sh
+if [[ -d "$SCRIPTS_DIR/lib" ]]; then
+    cp -R "$SCRIPTS_DIR"/lib/* .loom/scripts/lib/ 2>/dev/null || true
+fi
+chmod +x .loom/scripts/worktree.sh
+
+# Confirm the fixture has no `main` branch and origin/HEAD is unset, so we are
+# genuinely exercising the master-detection path (guards against a fixture that
+# accidentally provides `main` and masks the regression).
+if git show-ref --verify --quiet refs/heads/main; then
+    fail "6: fixture unexpectedly has a 'main' branch (test would not exercise master path)"
+else
+    pass "6: fixture has no 'main' branch (master-only, as intended)"
+fi
+
+M_ISSUE=42
+M_WT=".loom/worktrees/issue-$M_ISSUE"
+if ./.loom/scripts/worktree.sh "$M_ISSUE" >/tmp/wt-master.$$ 2>&1; then
+    pass "6: worktree.sh succeeds on a master-default repo (no manual patch)"
+else
+    fail "6: worktree.sh failed on master-default repo (see below)"
+    sed 's/^/      /' /tmp/wt-master.$$ || true
+fi
+
+# The worktree must exist, be registered, and its branch must be based on
+# origin/master (its merge-base with master equals master's tip).
+assert_file_exists "$M_WT/.loom-managed" "6: sentinel written on master-default worktree"
+if [[ -d "$M_WT" ]]; then
+    master_tip=$(git rev-parse origin/master 2>/dev/null)
+    wt_base=$(git -C "$M_WT" merge-base HEAD origin/master 2>/dev/null)
+    if [[ -n "$master_tip" && "$wt_base" == "$master_tip" ]]; then
+        pass "6: worktree branch is based on origin/master"
+    else
+        fail "6: worktree branch not based on origin/master (tip=$master_tip base=$wt_base)"
+    fi
+fi
+
+rm -f /tmp/wt-master.$$
+cd "$REPO_ROOT"
+
 # --- Summary ---
 echo ""
 echo "Tests run: $TESTS_RUN, Passed: $TESTS_PASSED, Failed: $TESTS_FAILED"
