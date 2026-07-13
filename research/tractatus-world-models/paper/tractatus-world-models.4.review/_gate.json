@@ -1,0 +1,19 @@
+{
+  "gate": "render_gate",
+  "pdf_path": "research/tractatus-world-models/paper/tractatus-world-models.4/main.pdf",
+  "log_path": "research/tractatus-world-models/paper/tractatus-world-models.4.audit/compile-log.txt",
+  "pages": 10,
+  "page_cap": null,
+  "overfull_boxes": [],
+  "overfull_threshold_pt": 5.0,
+  "compile": {
+    "status": "ok",
+    "exit_code": 0
+  },
+  "placeholders": [],
+  "findings": [],
+  "pass": true,
+  "reasons": [],
+  "engine_used": null,
+  "template_used": null
+}
