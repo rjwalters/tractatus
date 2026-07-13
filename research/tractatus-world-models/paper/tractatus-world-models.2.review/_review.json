@@ -1,0 +1,146 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-world-models.2",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {
+      "dimension": "1_rigor_of_method",
+      "score": 4,
+      "max": 6,
+      "justification": "Refinement-spectrum method sound and kernel-checked, but Theorem 4.3 (thm:horn-boundary) attributes a per-valuation boundary to horn_realizable_iff, whose actual Lean statement is the global biconditional; one of five headline contributions (C4) rests on a statement the kernel did not check. Downstream separation chain independently sound.",
+      "evidence_span": "main.tex §4, Theorem 4.3; proofs/TractatusOntologyHorn.lean:128-140"
+    },
+    {
+      "dimension": "2_evidence_sufficiency",
+      "score": 4,
+      "max": 6,
+      "justification": "63 kernel-checked declarations, clean build, verified axiom footprint, 42/42 Appendix cross-references — but the evidence for (C4) as printed is absent (no per-valuation Horn declaration exists), and the 'nine lines' proof-length claim is wrong (six tactic lines).",
+      "evidence_span": "main.tex §1, §4, §5"
+    },
+    {
+      "dimension": "3_clarity_of_contribution",
+      "score": 5,
+      "max": 5,
+      "justification": "Contributions enumerated (C1)-(C5) in the introduction, one extractable sentence each; central separation result stated crisply in both abstract and intro.",
+      "evidence_span": "main.tex §1, items (C1)-(C5)"
+    },
+    {
+      "dimension": "4_related_work_positioning",
+      "score": 4,
+      "max": 5,
+      "justification": "Button, Moss, Armstrong/Skyrms, Evans-Berger, McKinsey/Horn, Benzmueller each engaged on actual merits with named theorem relationships. Deduction: Spinney 2022 (venue precedent) and Lokhorst 1988 (prior formal reconstruction) sit uncited in refs.bib.",
+      "evidence_span": "main.tex §6; refs.bib"
+    },
+    {
+      "dimension": "5_reproducibility",
+      "score": 4,
+      "max": 5,
+      "justification": "Toolchain pin, axiom footprint, and per-theorem Lean cross-reference table are exemplary; but no resolvable artifact locator (URL/DOI/commit) appears anywhere — the companion citation is @unpublished with a prose note.",
+      "evidence_span": "main.tex Appendix A; refs.bib companion2026"
+    },
+    {
+      "dimension": "6_figure_table_quality",
+      "score": 3,
+      "max": 4,
+      "justification": "Figure legible and print-safe, Appendix table clean booktabs. Deduction: caption claims the tiers are 'refinement-incomparable', overstating Theorem 5.4 (failure of refinement-equivalence); the figure artwork itself carries the correct 'no refinement equivalence' label.",
+      "evidence_span": "main.tex Figure 1 caption"
+    },
+    {
+      "dimension": "7_prose_structural_quality",
+      "score": 3,
+      "max": 4,
+      "justification": "Flow intact, prose disciplined, no broken cross-references. Deduction: 6 overfull hboxes over the 5pt threshold (worst 121.5pt at the §5 colorModel display; 75.3pt Appendix module path; 73.2pt Definition 2.3 area).",
+      "evidence_span": ".2.audit/compile-log.txt; main.tex §5, Appendix A"
+    },
+    {
+      "dimension": "8_citation_hygiene",
+      "score": 4,
+      "max": 5,
+      "justification": "All 14 cited keys resolve with complete fields (bibtex 0 errors/warnings). Deductions: Hacker direct quote lacks a page number; TLP 3.42 quotation wording needs verification; three unused bib entries; evans2014 folds the arXiv id into the journal field.",
+      "evidence_span": "main.tex §1, §4; refs.bib"
+    },
+    {
+      "dimension": "9_rhetorical_economy",
+      "score": 4,
+      "max": 4,
+      "justification": "Nine pages with no restatement padding; each section adds a distinct layer; Limitations is genuine hedging; contribution extractable from abstract plus (C1)-(C5) in under 90 seconds.",
+      "evidence_span": "main.tex passim"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "blocker",
+      "dimension": "1_rigor_of_method",
+      "evidence_span": "main.tex §4 Theorem 4.3 (thm:horn-boundary); §1 item (C4)",
+      "rationale": "Theorem 4.3 states a per-valuation Horn realizability boundary and attributes it to horn_realizable_iff; the Lean theorem is the global biconditional (every assignment realizable iff every clause trivial). No per-valuation Horn declaration exists in the artifact.",
+      "suggested_fix": "Restate Thm 4.3 to match horn_realizable_iff (and rewrite the contrapositive gloss + intro (C4)), or add the per-valuation lemma to the artifact (mirroring exclusion_realizable_iff) and cite the new declaration."
+    },
+    {
+      "severity": "major",
+      "dimension": "2_evidence_sufficiency",
+      "evidence_span": "main.tex §5 proof sketch of Theorem 5.4",
+      "rationale": "'The kernel-checked proof is nine lines' — the proof body of exclusion_not_horn is 6 tactic lines; no counting convention yields nine.",
+      "suggested_fix": "Reword to 'six lines' or 'a few lines'."
+    },
+    {
+      "severity": "major",
+      "dimension": "6_figure_table_quality",
+      "evidence_span": "main.tex Figure 1 caption",
+      "rationale": "Caption says the Horn and exclusion tiers are 'refinement-incomparable'; Theorem 5.4 proves failure of refinement-equivalence, and every exclusion model refines into Horn(S, []) = freeModel, so the tiers are comparable in one direction.",
+      "suggested_fix": "Align caption with the figure artwork's 'no refinement equivalence' wording."
+    },
+    {
+      "severity": "major",
+      "dimension": "5_reproducibility",
+      "evidence_span": "main.tex Appendix A; refs.bib companion2026",
+      "rationale": "The paper's only artifact locator is the prose phrase 'the tractatus repository'; no URL, DOI, or commit hash is given for the machine-checked development.",
+      "suggested_fix": "Add a resolvable repository URL + commit hash or an archival DOI."
+    },
+    {
+      "severity": "minor",
+      "dimension": "7_prose_structural_quality",
+      "evidence_span": ".2.audit/compile-log.txt",
+      "rationale": "6 overfull hboxes over 5pt: worst 121.5pt (colorModel display, §5), 75.3pt (Appendix module path), 73.2pt (Definition 2.3 area).",
+      "suggested_fix": "Break the display, make the module path breakable, rework the Definition 2.3 line; rebuild to a clean log."
+    },
+    {
+      "severity": "minor",
+      "dimension": "8_citation_hygiene",
+      "evidence_span": "main.tex §1 (Hacker quote); §4 (TLP 3.42 quote)",
+      "rationale": "Hacker direct quotation carries no page number; TLP 3.42 quotation reads 'but' where Pears-McGuinness reads 'nevertheless'.",
+      "suggested_fix": "Add the Hacker page reference; verify and correct the TLP 3.42 wording against the cited translation."
+    },
+    {
+      "severity": "minor",
+      "dimension": "4_related_work_positioning",
+      "evidence_span": "refs.bib lokhorst1988, spinney2022, weiss2017",
+      "rationale": "Three bib entries defined but never cited; Spinney 2022 (Synthese venue precedent) and Lokhorst 1988 (prior formal reconstruction of the Tractatus ontology) are close enough to merit engagement. [related-work]",
+      "suggested_fix": "Cite both in §6 (a sentence each) or drop the unused entries; a pub-litsearch re-run would settle placement."
+    },
+    {
+      "severity": "nit",
+      "dimension": "7_prose_structural_quality",
+      "evidence_span": "main.tex title block",
+      "rationale": "\\date carries a 'Draft v2' marker.",
+      "suggested_fix": "Remove the draft marker for the submission copy."
+    }
+  ],
+  "critical_flags": [
+    {
+      "type": "theorem_artifact_mismatch",
+      "justification": "Theorem 4.3 prints a per-valuation Horn realizability boundary and attributes it to horn_realizable_iff; the actual Lean theorem (proofs/TractatusOntologyHorn.lean, verified this pass) is the global biconditional — every assignment S → Prop is realizable iff every clause is trivial. No declaration proving the printed statement exists in the artifact, yet §1 asserts every result is kernel-checked. Upholds the .2.audit critical flag; downstream separation chain unaffected.",
+      "evidence_span": "main.tex §4 Theorem 4.3; proofs/TractatusOntologyHorn.lean:128-140"
+    },
+    {
+      "type": "render_gate_overfull_boxes",
+      "justification": "overfull_boxes: 18 overfull box(es) over 5.0pt threshold (6 unique boxes across 3 concatenated pdflatex passes; worst 121.5pt at the §5 colorModel display). Deterministic render-gate failure per pub-review step 4b; payload in _gate.json.",
+      "evidence_span": ".2.audit/compile-log.txt"
+    }
+  ],
+  "total": 35,
+  "threshold": 35,
+  "verdict": "BLOCK"
+}

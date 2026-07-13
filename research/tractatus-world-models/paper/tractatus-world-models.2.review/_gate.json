@@ -1,0 +1,239 @@
+{
+  "gate": "render_gate",
+  "pdf_path": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2/main.pdf",
+  "log_path": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt",
+  "pages": 9,
+  "page_cap": null,
+  "overfull_boxes": [
+    {
+      "kind": "hbox",
+      "amount_pt": 73.23549,
+      "line": 217,
+      "raw": "Overfull \\hbox (73.23549pt too wide) in paragraph at lines 217--222"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 23.86966,
+      "line": 289,
+      "raw": "Overfull \\hbox (23.86966pt too wide) in paragraph at lines 289--291"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 29.27226,
+      "line": 345,
+      "raw": "Overfull \\hbox (29.27226pt too wide) in paragraph at lines 345--354"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 121.54163,
+      "line": 419,
+      "raw": "Overfull \\hbox (121.54163pt too wide) in paragraph at lines 419--424"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 19.46701,
+      "line": 549,
+      "raw": "Overfull \\hbox (19.46701pt too wide) in paragraph at lines 549--568"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 75.27243,
+      "line": 639,
+      "raw": "Overfull \\hbox (75.27243pt too wide) in paragraph at lines 639--642"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 73.23549,
+      "line": 217,
+      "raw": "Overfull \\hbox (73.23549pt too wide) in paragraph at lines 217--222"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 23.86966,
+      "line": 289,
+      "raw": "Overfull \\hbox (23.86966pt too wide) in paragraph at lines 289--291"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 29.27226,
+      "line": 345,
+      "raw": "Overfull \\hbox (29.27226pt too wide) in paragraph at lines 345--354"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 121.54163,
+      "line": 419,
+      "raw": "Overfull \\hbox (121.54163pt too wide) in paragraph at lines 419--424"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 19.46701,
+      "line": 549,
+      "raw": "Overfull \\hbox (19.46701pt too wide) in paragraph at lines 549--568"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 75.27243,
+      "line": 639,
+      "raw": "Overfull \\hbox (75.27243pt too wide) in paragraph at lines 639--642"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 73.23549,
+      "line": 217,
+      "raw": "Overfull \\hbox (73.23549pt too wide) in paragraph at lines 217--222"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 23.86966,
+      "line": 289,
+      "raw": "Overfull \\hbox (23.86966pt too wide) in paragraph at lines 289--291"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 29.27226,
+      "line": 345,
+      "raw": "Overfull \\hbox (29.27226pt too wide) in paragraph at lines 345--354"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 121.54163,
+      "line": 419,
+      "raw": "Overfull \\hbox (121.54163pt too wide) in paragraph at lines 419--424"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 19.46701,
+      "line": 549,
+      "raw": "Overfull \\hbox (19.46701pt too wide) in paragraph at lines 549--568"
+    },
+    {
+      "kind": "hbox",
+      "amount_pt": 75.27243,
+      "line": 639,
+      "raw": "Overfull \\hbox (75.27243pt too wide) in paragraph at lines 639--642"
+    }
+  ],
+  "overfull_threshold_pt": 5.0,
+  "compile": {
+    "status": "skipped",
+    "exit_code": null
+  },
+  "placeholders": [],
+  "findings": [
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (73.2pt over) at L217.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L217"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (23.9pt over) at L289.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L289"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (29.3pt over) at L345.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L345"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (121.5pt over) at L419.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L419"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (19.5pt over) at L549.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L549"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (75.3pt over) at L639.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L639"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (73.2pt over) at L217.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L217"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (23.9pt over) at L289.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L289"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (29.3pt over) at L345.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L345"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (121.5pt over) at L419.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L419"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (19.5pt over) at L549.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L549"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (75.3pt over) at L639.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L639"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (73.2pt over) at L217.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L217"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (23.9pt over) at L289.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L289"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (29.3pt over) at L345.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L345"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (121.5pt over) at L419.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L419"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (19.5pt over) at L549.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L549"
+    },
+    {
+      "gate": "overfull_boxes",
+      "severity": "error",
+      "message": "Overfull \\hbox (75.3pt over) at L639.",
+      "location": "/Volumes/Stripe/tractatus/issue-5/research/tractatus-world-models/paper/tractatus-world-models.2.audit/compile-log.txt:L639"
+    }
+  ],
+  "pass": false,
+  "reasons": [
+    "overfull_boxes: 18 overfull box(es) over 5.0pt threshold."
+  ],
+  "engine_used": null,
+  "template_used": null
+}

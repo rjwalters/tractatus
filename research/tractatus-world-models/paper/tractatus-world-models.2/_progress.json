@@ -15,6 +15,14 @@
       "kind": "format-migration",
       "from": "tractatus-world-models.1/paper.tex (article class, inline thebibliography)",
       "note": "Canary adoption of anvil pub grammar; content-identical to v1 modulo mechanical changes. See changelog.md."
-    }
+    },
+    "score_history": [
+      {
+        "iteration": 2,
+        "total": 35,
+        "threshold": 35,
+        "rubric_id": "anvil-pub-v2"
+      }
+    ]
   }
 }

@@ -157,3 +157,26 @@ That check is what surfaced the run's one critical flag (Theorem 4.3 mis-attribu
 `horn_realizable_iff`), which no cite/figure/build check would have caught. Suggest an
 optional "artifact claims" step in pub-audit for papers whose evidence inventory is a
 formal development.
+
+## Review-phase friction (pub-review run, 2026-07-13)
+
+## F13. Render-gate input naming: command doc says `paper.pdf`, audit artifact is `main.pdf`
+
+`commands/pub-review.md` step 4b names the gate input `pdf_path: <thread>.{N}/paper.pdf`
+"produced by pub-audit", but the audit's build artifact for a `main.tex` entry point is
+`main.pdf` (this thread's audit committed `tractatus-world-models.2/main.pdf`). Followed
+literally, the gate would either fail open ("paper.pdf absent — run pub-audit first",
+despite the audit having run) or spuriously fail the `compile` dimension ("PDF not
+produced"). The reviewer gated `main.pdf` and recorded the mismatch here. Upstream fix:
+step 4b should reference the entry-point-derived name (`main.pdf`) or the audit contract
+should pin the output PDF name; the two docs currently disagree.
+
+## F14. Multi-pass `compile-log.txt` triple-counts overfull boxes in the render gate
+
+The audit's `compile-log.txt` concatenates the full `pdflatex → bibtex → pdflatex →
+pdflatex` cycle, so `render_gate._parse_overfull_boxes` counted each unique overfull
+box once per LaTeX pass: 18 hits for 6 unique boxes (worst 121.5pt). Verdict-wise it
+made no difference (any hit over threshold fails the dimension), but the reported count
+is inflated 3x and a reviser chasing "18 boxes" will find 6. Upstream fix: gate should
+dedupe by (source line, amount), or the audit contract should specify capturing only
+the final pass's log.
