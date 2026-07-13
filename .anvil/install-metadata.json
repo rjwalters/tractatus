@@ -1,11 +1,11 @@
 {
-  "anvil_version": "0.7.1",
+  "anvil_version": "0.8.0",
   "anvil_source": "/Users/rwalters/GitHub/anvil",
   "install_date": "2026-07-13",
   "layout_version": 2,
   "installed_skills": ["pub"],
   "skipped_overrides": [],
-  "skill_hashes": {"pub": "cd5ad2b8c3e86c1742ee0f4dac21edc9c63ff13b48d3941baf4ba2c77eabe696"},
-  "skill_versions": {"pub": "0.7.1"},
+  "skill_hashes": {"pub": "fac6d33361e43150df361aa62269cbfc4b012126b417fbdf0a097a73a0773088"},
+  "skill_versions": {"pub": "0.8.0"},
   "lib_hash": "2d7db6546b11d0d2287b1e82c7cb95e094e6cae979b47d0df8d156385499eb9d"
 }
