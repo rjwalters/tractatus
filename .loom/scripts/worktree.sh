@@ -340,6 +340,38 @@ log_worktree_size() {
     fi
 }
 
+# write_loom_sentinel <worktree-abs-path>
+#
+# Write the `.loom-managed` sentinel marker that cleanup tooling (merge-pr.sh,
+# agent-destroy.sh, loom-clean) requires before it will auto-remove a worktree.
+# Worktrees lacking this marker are treated as user-owned and never touched by
+# Loom (see issue #3334).
+#
+# This helper is idempotent-safe: it (re)writes the sentinel whenever the file
+# is missing. It is called both on the first-creation path AND on the
+# "worktree already exists" re-invocation branches (preserve-existing-work,
+# stale-worktree-reset). Those branches return early before reaching the
+# first-creation sentinel write, so without this call a worktree created or
+# reset by a *repeat* invocation would permanently lack the sentinel and be
+# stranded by merge-pr.sh's cleanup gate (merge-pr.sh:644). See issue #11.
+write_loom_sentinel() {
+    local wt_abs="$1"
+    [[ -z "$wt_abs" ]] && return 0
+    # Only write when missing so we never clobber a marker a user may have
+    # customized, and so repeat invocations are cheap no-ops.
+    if [[ -f "$wt_abs/.loom-managed" ]]; then
+        return 0
+    fi
+    cat > "$wt_abs/.loom-managed" <<EOF
+# Loom-managed worktree marker
+# Created by .loom/scripts/worktree.sh
+# Issue: $ISSUE_NUMBER
+# Branch: $BRANCH_NAME
+# Removing this file makes Loom treat the worktree as user-owned and refuse
+# to clean it up automatically.
+EOF
+}
+
 # Function to fetch latest changes from origin/main
 # Uses fetch-only approach to avoid conflicts with worktrees that have main checked out
 fetch_latest_main() {
@@ -766,12 +798,18 @@ if [[ -d "$WORKTREE_PATH" ]]; then
             exit 1
         fi
 
+        # Backfill the Loom sentinel: these sparse/full re-configuration paths
+        # act on an already-registered worktree and exit before the
+        # first-creation sentinel write, so a worktree first created by a
+        # different invocation could otherwise lack the marker (#11).
+        REEXISTING_ABS_WT=$(cd "$WORKTREE_PATH" && pwd)
+        write_loom_sentinel "$REEXISTING_ABS_WT"
+
         if [[ "$FULL_MODE" == "true" ]]; then
             disable_sparse_checkout "$WORKTREE_PATH"
             log_worktree_size "$WORKTREE_PATH" "Worktree size (full)"
             if [[ "$JSON_OUTPUT" == "true" ]]; then
-                ABS_WT=$(cd "$WORKTREE_PATH" && pwd)
-                echo '{"success": true, "worktreePath": "'"$ABS_WT"'", "branchName": "'"$BRANCH_NAME"'", "issueNumber": '"$ISSUE_NUMBER"', "sparse": false, "cone": []}'
+                echo '{"success": true, "worktreePath": "'"$REEXISTING_ABS_WT"'", "branchName": "'"$BRANCH_NAME"'", "issueNumber": '"$ISSUE_NUMBER"', "sparse": false, "cone": []}'
             else
                 print_success "Worktree converted to full checkout"
                 print_info "To use this worktree: cd $WORKTREE_PATH"
@@ -785,9 +823,8 @@ if [[ -d "$WORKTREE_PATH" ]]; then
         materialize_sparse_cone "$WORKTREE_PATH"
         log_worktree_size "$WORKTREE_PATH" "Worktree size (sparse)"
         if [[ "$JSON_OUTPUT" == "true" ]]; then
-            ABS_WT=$(cd "$WORKTREE_PATH" && pwd)
             CONE_JSON=$(printf '%s\n' "${CONE_PATHS[@]}" | awk 'BEGIN{printf "["} {if(NR>1)printf ","; printf "\"%s\"", $0} END{printf "]"}')
-            echo '{"success": true, "worktreePath": "'"$ABS_WT"'", "branchName": "'"$BRANCH_NAME"'", "issueNumber": '"$ISSUE_NUMBER"', "sparse": true, "cone": '"$CONE_JSON"'}'
+            echo '{"success": true, "worktreePath": "'"$REEXISTING_ABS_WT"'", "branchName": "'"$BRANCH_NAME"'", "issueNumber": '"$ISSUE_NUMBER"', "sparse": true, "cone": '"$CONE_JSON"'}'
         else
             print_success "Sparse-checkout cone applied"
             print_info "To use this worktree: cd $WORKTREE_PATH"
@@ -804,8 +841,15 @@ if [[ -d "$WORKTREE_PATH" ]]; then
         local_commits_behind=$(git -C "$WORKTREE_PATH" rev-list --count "HEAD..origin/main" 2>/dev/null) || local_commits_behind="0"
         local_uncommitted=$(git -C "$WORKTREE_PATH" status --porcelain 2>/dev/null) || local_uncommitted=""
 
+        # Backfill the Loom sentinel on every re-invocation exit path below.
+        # These branches return before the first-creation sentinel write, so a
+        # worktree created/reset by a repeat invocation would otherwise never
+        # get its marker and be stranded by merge-pr.sh's cleanup gate (#11).
+        EXISTING_ABS_WORKTREE_PATH=$(cd "$WORKTREE_PATH" && pwd)
+
         if [[ "$local_commits_ahead" -gt 0 || -n "$local_uncommitted" ]]; then
             # Worktree has real work - preserve it
+            write_loom_sentinel "$EXISTING_ABS_WORKTREE_PATH"
             if [[ "$JSON_OUTPUT" != "true" ]]; then
                 print_info "Worktree is registered with git"
                 if [[ "$local_commits_ahead" -gt 0 ]]; then
@@ -827,6 +871,7 @@ if [[ -d "$WORKTREE_PATH" ]]; then
 
             if git -C "$WORKTREE_PATH" fetch origin main 2>/dev/null && \
                git -C "$WORKTREE_PATH" reset --hard origin/main 2>/dev/null; then
+                write_loom_sentinel "$EXISTING_ABS_WORKTREE_PATH"
                 if [[ "$JSON_OUTPUT" != "true" ]]; then
                     print_success "Stale worktree reset to origin/main"
                     echo ""
@@ -834,6 +879,7 @@ if [[ -d "$WORKTREE_PATH" ]]; then
                 fi
                 exit 0
             else
+                write_loom_sentinel "$EXISTING_ABS_WORKTREE_PATH"
                 if [[ "$JSON_OUTPUT" != "true" ]]; then
                     print_warning "Could not reset stale worktree (continuing to use as-is)"
                     echo ""
@@ -1039,14 +1085,7 @@ if _try_worktree_add; then
     # Cleanup tooling (merge-pr.sh, agent-destroy.sh, loom-clean) refuses to
     # remove worktrees lacking this marker, so user-provisioned worktrees at
     # arbitrary paths are never touched by Loom. See issue #3334.
-    cat > "$ABS_WORKTREE_PATH/.loom-managed" <<EOF
-# Loom-managed worktree marker
-# Created by .loom/scripts/worktree.sh
-# Issue: $ISSUE_NUMBER
-# Branch: $BRANCH_NAME
-# Removing this file makes Loom treat the worktree as user-owned and refuse
-# to clean it up automatically.
-EOF
+    write_loom_sentinel "$ABS_WORKTREE_PATH"
 
     # Sparse-mode: configure cone and materialize tracked files.
     # This must run before submodule init / symlinking so the working tree
