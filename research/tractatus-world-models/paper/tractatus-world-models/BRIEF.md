@@ -52,7 +52,7 @@ characterizations; the top world (all states obtain) separates them.
 
 ## Experiments (evidence inventory)
 
-All results are formalized in Lean 4 and checked by its kernel: 63 declarations, no
+All results are formalized in Lean 4 and checked by its kernel: 64 declarations, no
 `sorry`s, axiom footprint limited to `propext`, `Classical.choice`, `Quot.sound`.
 Evidence is the four Lean modules in the `tractatus` repository:
 
