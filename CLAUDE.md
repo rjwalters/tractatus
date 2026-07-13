@@ -36,7 +36,7 @@ Expected: zero errors, zero warnings (nine `#eval` info lines are intentional de
 Uses the pub domain skills (`.claude/skills/pub/`, `.claude/commands/pub/`).
 State machine: EMPTY → DRAFTED → REVIEWED → REVISED → ... → READY.
 Convergence: review score ≥ 32/40, 0 critical issues.
-Current: v7 (REVISED — integrates the Aristotle-proved N-operator + functional-completeness results; needs a fresh pub-review pass). Remaining before submission: review pass, CUP class conversion. Historical note: the v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them.
+Current: v8 (READY — pub-review converged at 39/40, 0 critical issues; review artifact at `research/tractatus-ontology/paper/tractatus-ontology.8.review/review.md`). v8 integrates the Aristotle-proved N-operator, functional-completeness, exact-expressibility, and decidability results (80 results / 2,296 lines / six files). Remaining before submission: CUP class conversion (issue #14). Historical note: the v3 ACCEPT missed that the repo didn't build and that the old hierarchy theorem was false; verify artifact claims by running them (v8 was re-verified from scratch: `lake build` clean with exactly 9 `#eval` lines, 19-page 2-pass pdflatex with no undefined refs, all 80 declarations and headline statements checked against source).
 
 ## LaTeX build
 
