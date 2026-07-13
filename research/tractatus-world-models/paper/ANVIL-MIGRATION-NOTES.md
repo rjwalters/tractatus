@@ -114,3 +114,46 @@ cite paper with a custom preamble simply cannot use `anvil-paper.cls` without co
 changes, so "keep `article`, note the deviation" should be a first-class documented
 migration path, not an escape hatch. F4 (gitignored progress) and F8 (no draft-time PDF)
 are consumer-repo-convention clashes worth an explicit adoption decision.
+
+## Audit-phase friction (pub-audit run, 2026-07-13)
+
+## F9. `.anvil` venv was not pre-synced; first `uv run` builds it on the fly
+
+The first `uv run --project .anvil python -m anvil.lib.sidecar ...` invocation created
+the venv from scratch ("Creating virtual environment at: .anvil/.venv ... Built anvil")
+and emitted a hardlink warning because the uv cache lives on a different filesystem
+than the `/Volumes/Stripe` worktree ("Failed to hardlink files; falling back to full
+copy"). Harmless, but a critic dispatched parallel-safe could race on first-sync;
+consider `uv sync --project .anvil` in worktree setup, and `UV_LINK_MODE=copy` for
+worktrees on external volumes.
+
+## F10. `python -m anvil.lib.sidecar` emits a runpy RuntimeWarning on every call
+
+Every CLI-shim invocation prints `<frozen runpy>:130: RuntimeWarning:
+'anvil.lib.sidecar' found in sys.modules after import of package 'anvil.lib' ...`.
+Cosmetic (exit codes and behavior are correct: stage/cleanup/commit all worked, and
+the commit rename was atomic), but it is noise in every audit log. Upstream fix:
+a console-script entry point instead of `-m`, or move the CLI into a `__main__`-only
+module.
+
+## F11. No `<thread>/refs/` dir; claim-support ground truth lives in the v1 dir
+
+The pub-audit contract reads author-supplied sources from `<thread>/refs/**`. This
+migrated thread has none — the verified citation data (DOIs, volumes, pages, claim
+annotations) lives in pre-anvil `tractatus-world-models.1/literature.md`. The audit
+used it as ground truth by instruction, but a by-the-book auditor would have marked
+every citation `unverified`. Migration guidance should say: carry `literature.md`
+(or the source notes it summarizes) into `<thread>/refs/` so the audit phase can see it.
+
+## F12. External-artifact claims (Lean) are outside the audit contract's checklists
+
+The paper's central verifiability claims (63 declarations, no sorries, axiom
+footprint, warning-free build) concern the repo's Lean development, not cites or
+figures. pub-audit's procedure has no step for external proof artifacts; this repo's
+verify-artifact-claims norm filled the gap (grep of all 42 Appendix cross-references,
+full `lake build` in the worktree — which required a fresh ~3,000-job mathlib cache
+fetch since `.lake/` is per-worktree — and `#print axioms` on 10 headline theorems).
+That check is what surfaced the run's one critical flag (Theorem 4.3 mis-attributed to
+`horn_realizable_iff`), which no cite/figure/build check would have caught. Suggest an
+optional "artifact claims" step in pub-audit for papers whose evidence inventory is a
+formal development.
