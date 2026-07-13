@@ -1,0 +1,100 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-world-models.4",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {
+      "dimension": "1_rigor_of_method",
+      "score": 6,
+      "max": 6,
+      "justification": "Body unchanged from converged v3: definitions -> kernel-checked theorems -> historically loaded corollary. Theorem 5.3's anchor horn_valuation_realizable_iff re-verified at proofs/TractatusOntologyHorn.lean:167 with the Lean statement exactly the printed per-valuation boundary; #print axioms clean. No artifact-unbacked theorem statement found.",
+      "evidence_span": "main.tex §1 (C5), §5 Theorem 5.3; proofs/TractatusOntologyHorn.lean:167-176"
+    },
+    {
+      "dimension": "2_evidence_sufficiency",
+      "score": 6,
+      "max": 6,
+      "justification": "64 declarations / 1,064 lines re-verified exactly (37+9+6+12; wc -l 472+212+145+235); the external artifact was RUN via the 0.8.0 artifact_verify gate — lake build exit 0, 3068 jobs, exactly the 9 documented #eval info lines — and git diff 0852c5b master -- proofs/ is empty, so the result transfers to the pinned commit verbatim.",
+      "evidence_span": "main.tex §1; _artifact_verify.json; proofs/TractatusOntology{Spectrum,Horn,Equiv,Exclusion}.lean"
+    },
+    {
+      "dimension": "3_clarity_of_contribution",
+      "score": 5,
+      "max": 5,
+      "justification": "Contributions enumerated (C1)-(C5), one extractable sentence each; central separation result crisp in the abstract. Unchanged by the v4 polish.",
+      "evidence_span": "main.tex abstract; §1 items (C1)-(C5)"
+    },
+    {
+      "dimension": "4_related_work_positioning",
+      "score": 5,
+      "max": 5,
+      "justification": "Button, Moss, Armstrong/Skyrms, Evans-Berger, McKinsey/Horn, Benzmueller engaged on their merits; Lokhorst and Weiss positioned as closest precedents; Spinney 2022 (Synthese venue precedent) engaged in the §4 footnote. 17/17 bib entries cited; no known close prior work missing. No litsearch sibling (legacy baseline, no deduction).",
+      "evidence_span": "main.tex §4 footnote, §7.5; refs.bib"
+    },
+    {
+      "dimension": "5_reproducibility",
+      "score": 5,
+      "max": 5,
+      "justification": "v3 deduction closed: commit 0852c5b pinned in §1, full 40-char hash in Appendix A, and bib note; verified this pass as an ancestor of master with proofs/, lakefile.lean, lean-toolchain, lake-manifest.json byte-identical since — so the artifact gate's clean lake build at HEAD confirms the 'warning-free at that commit' claim. Toolchain pinned, per-theorem index complete, repo public.",
+      "evidence_span": "main.tex §1, Appendix A; refs.bib companion2026; _artifact_verify.json"
+    },
+    {
+      "dimension": "6_figure_table_quality",
+      "score": 4,
+      "max": 4,
+      "justification": "v3 caption nit fixed with the suggested unambiguous phrasing ('realizes exactly the image profiles of'), matching Theorem 6.5's profile-set-equality content; figure re-inspected in the compiled PDF (legible, black-only); Appendix booktabs index clean.",
+      "evidence_span": "main.tex Figure 1 caption; figures/spectrum.pdf; Appendix A"
+    },
+    {
+      "dimension": "7_prose_structural_quality",
+      "score": 4,
+      "max": 4,
+      "justification": "Flow intact; v4 stray-space fix landed; render gate PASS on the audit-built PDF (10 pages, 0 overfull boxes, 0 placeholders), 0 errors, 0 undefined references. Two mild underfull hboxes (badness <= 2237) are cosmetic.",
+      "evidence_span": "_gate.json; tractatus-world-models.4.audit/compile-log.txt; main.tex §3 Theorem 4.2"
+    },
+    {
+      "dimension": "8_citation_hygiene",
+      "score": 5,
+      "max": 5,
+      "justification": "17/17 keys resolve with complete fields (cited set == bib set; bibtex 0 errors/warnings); the last known-wrong entry (invented companion title) is fixed and verified in-repo against tractatus-ontology.9/paper.tex:139-140; no invented locators.",
+      "evidence_span": "refs.bib companion2026; research/tractatus-ontology/paper/tractatus-ontology.9/paper.tex:139-140"
+    },
+    {
+      "dimension": "9_rhetorical_economy",
+      "score": 4,
+      "max": 4,
+      "justification": "Ten pages, every section load-bearing, hedging proportional to the Limitations actually conceded; contribution extractable from abstract + (C1)-(C5) in under 90 seconds.",
+      "evidence_span": "main.tex passim; §8 Limitations"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "minor",
+      "dimension": "5_reproducibility",
+      "evidence_span": "BRIEF.md frontmatter (venue: Synthese, anonymous: false); main.tex §1 artifact paragraph",
+      "rationale": "Submission mechanics, not paper content: Synthese review is double-anonymous by default and the body identifies the author (repo URL, self-citation). Known, deliberately-open item on issue #5; not scored against the paper.",
+      "suggested_fix": "Prepare the anonymized submission variant per Synthese author guidelines at submission time."
+    },
+    {
+      "severity": "nit",
+      "dimension": "7_prose_structural_quality",
+      "evidence_span": "main.tex:358-367 and main.tex:569-593 (final compile pass log)",
+      "rationale": "Two mildly underfull hboxes (badness 1831 and 2237). Cosmetic interword spacing only; the final pass is otherwise warning-free.",
+      "suggested_fix": "Ignore unless a later revision touches those paragraphs anyway."
+    },
+    {
+      "severity": "nit",
+      "dimension": "8_citation_hygiene",
+      "evidence_span": "refs.bib companion2026; v4 changelog (author decision on record)",
+      "rationale": "The companion paper may retitle at its v10 pass, which would silently re-break the now-correct companion2026 title.",
+      "suggested_fix": "Re-sync the companion title at submission time if the retitle lands."
+    }
+  ],
+  "critical_flags": [],
+  "total": 44,
+  "threshold": 35,
+  "verdict": "ADVANCE"
+}
