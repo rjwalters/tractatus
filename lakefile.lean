@@ -6,7 +6,8 @@ package tractatus
 @[default_target]
 lean_lib Proofs where
   srcDir := "proofs"
-  globs := #[.one `TractatusOntology, .one `TractatusQuantifiers]
+  globs := #[.one `TractatusOntology, .one `TractatusQuantifiers,
+             .one `TractatusNOperator, .one `TractatusCompleteness]
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4" @ "v4.26.0"
