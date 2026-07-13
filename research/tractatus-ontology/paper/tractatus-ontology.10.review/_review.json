@@ -1,0 +1,30 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-ontology.10",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {"dimension": "1_rigor_of_method", "score": 6, "max": 6, "critical": false, "justification": "Machine-checked method with honestly scoped modeling decisions; the definitional character of the headline collapse remains confronted in Remark 4.6; v10 diff is prose/bibliography only, leaving the audited proof base unchanged."},
+    {"dimension": "2_evidence_sufficiency", "score": 6, "max": 6, "critical": false, "justification": "80 kernel-verified results, 0 sorries, 1 inert axiom; per-file line/declaration arithmetic exact and unchanged from the v9-audited artifact; no Lean file touched in v10."},
+    {"dimension": "3_clarity_of_contribution", "score": 5, "max": 5, "critical": false, "justification": "Central claim displayed as a one-sentence quote in the introduction; eight numbered one-sentence contributions with section pointers; the compressed ~262-word abstract still names every headline result."},
+    {"dimension": "4_related_work_positioning", "score": 5, "max": 5, "critical": false, "justification": "v9's deduction closed: Wehmeier 2004 and Rogers & Wehmeier 2012 (RSL) now engaged substantively and accurately in Section 5 with a contact sentence in Section 4.6, on an honest complementarity framing with correct bibliographic details; remaining prior work engaged on its merits."},
+    {"dimension": "5_reproducibility", "score": 5, "max": 5, "critical": false, "justification": "Pinned toolchain, public repo, CI, step-by-step build appendix; this review re-ran the 3-pass pdflatex recipe from scratch and content-matched the committed PDF; Lean artifact facts verified on this master lineage."},
+    {"dimension": "6_figure_table_quality", "score": 4, "max": 4, "critical": false, "justification": "Both TikZ figures self-contained at caption level, black-only per venue with pattern-based encodings; appendix tables have meaningful headers and booktabs alignment; untouched in v10."},
+    {"dimension": "7_prose_structural_quality", "score": 3, "max": 4, "critical": false, "evidence_span": "Section 5, Wehmeier paragraph, closing sentence", "fix": "Replace 'Neither work treats identity by the exclusive convention' with 'Our formalization does not treat identity by the exclusive convention'; also fix the Section 4.3 'three new results' leftover.", "justification": "Flow intact, hedging calibrated, render pass clean (0 overfull, 0 broken refs), but the new Wehmeier paragraph ends with a mis-drafted sentence that is false on its natural reading - the same paragraph describes those works' exclusive identity treatment two sentences earlier; the intended subject is this paper's own development. Carried-over v9 nit ('The three new results') also remains."},
+    {"dimension": "8_citation_hygiene", "score": 5, "max": 5, "critical": false, "justification": "23/23 cites resolve with no orphans; the two new entries (rogers2012, wehmeier2004) are complete with DOIs and Crossref-verified; prose claims about sources accurate where checkable; references/wehmeier.md claim-support note added."},
+    {"dimension": "9_rhetorical_economy", "score": 4, "max": 4, "critical": false, "justification": "v9's deduction closed: abstract compressed ~450 to ~262 words with no headline claim lost, and the conclusion isolates two consequences instead of re-running the result sequence; residual duplicated complementarity framing (Sections 4.6 and 5) is a nit below scoring threshold."}
+  ],
+  "findings": [
+    {"severity": "major", "dimension": "7_prose_structural_quality", "evidence_span": "Section 5, Wehmeier paragraph", "rationale": "'Neither work treats identity by the exclusive convention, so their identity results have no direct analogue here' is false or self-contradictory on its natural readings: the same paragraph states that Wehmeier 2004 and Rogers & Wehmeier 2012 treat identity precisely by the exclusive convention. The intended subject is this paper's own development, which has no identity apparatus. A referee at the target venue - plausibly Wehmeier - will catch it.", "suggested_fix": "Replace with 'Our formalization does not treat identity by the exclusive convention, so their identity results have no direct analogue here.'"},
+    {"severity": "minor", "dimension": "9_rhetorical_economy", "evidence_span": "Section 4.6 contact paragraph / Section 5 Wehmeier paragraph", "rationale": "The they-prove-completeness-on-paper vs we-mechanize-semantic-reach contrast is stated twice in similar words.", "suggested_fix": "Trim the Section 4.6 statement to one clause plus a pointer to Section 5."},
+    {"severity": "minor", "dimension": "4_related_work_positioning", "evidence_span": "Section 5, proof assistants paragraph", "rationale": "Carried over from v9, unaddressed: scherf2025, an unpublished manuscript with a deleted repository (web.archive snapshot only), is still framed as 'the most directly comparable work'.", "suggested_fix": "Demote the framing or add a published comparison point."},
+    {"severity": "nit", "dimension": "7_prose_structural_quality", "evidence_span": "Section 4.3", "rationale": "Carried over from v9, unaddressed: 'The three new results' reads as a version-diff leftover; a fresh reader has no baseline for 'new'.", "suggested_fix": "Say 'The three results of this subsection'."},
+    {"severity": "nit", "dimension": "8_citation_hygiene", "evidence_span": "Bibliography, fogelin1987", "rationale": "Carried over from v9, unaddressed: prose credits Fogelin with initiating the debate; the critique first appeared in the 1976 first edition, while the entry cites the 1987 second edition.", "suggested_fix": "Cite as Fogelin (1976/1987) at first prose mention."}
+  ],
+  "critical_flags": [],
+  "total": 43,
+  "threshold": 35,
+  "verdict": "ADVANCE"
+}
