@@ -29,6 +29,11 @@ Contents:
   assignment is realized by some `HornModel S cs` iff every clause is
   trivial (`c.1 = c.2`). Sharpens `hornModel_independence_fails` to a
   biconditional (see Attribution).
+- `horn_valuation_realizable_iff` — the **per-valuation** boundary: a
+  Boolean valuation `v : S → Bool` is realizable as the profile of some
+  `HornModel S cs` world iff `v` satisfies every clause. Complements the
+  global `horn_realizable_iff`; mirrors `exclusion_realizable_iff` on the
+  exclusion tier (see Attribution).
 - `weatherModel_equiv_hornModel` — `weatherModel` as a single-clause
   `HornModel` instance, via the equivalence with `ConstrainedWorld`.
 
@@ -42,8 +47,12 @@ Aristotle automated theorem prover (https://aristotle.harmonic.fun),
 project `1efa3c7d`, 2026-07-12, and is integrated here against the
 canonical `HornModel` type (originally staged as a standalone `HornWorld`
 in `research/tractatus-ontology/aristotle/batch-2/TractatusHornAristotle.lean`;
-the two definitions are structurally identical). Axiom footprint:
-`propext`, `Classical.choice`, `Quot.sound` only.
+the two definitions are structurally identical). The per-valuation
+boundary `horn_valuation_realizable_iff` (statement and proof) is by
+Claude, authored for the follow-up paper on constrained world models
+(issue #5), mirroring the realizability phrasing of
+`exclusion_realizable_iff` in `TractatusOntologyExclusion.lean`. Axiom
+footprint: `propext`, `Classical.choice`, `Quot.sound` only.
 
 No new axioms.  No sorries.
 -/
@@ -136,6 +145,35 @@ theorem horn_realizable_iff {S : Type} (cs : List (S × S)) :
     aesop
   · intro hcs assignment
     exact ⟨⟨assignment, by grind⟩, by aesop⟩
+
+/-- **Per-valuation Horn realizability boundary.** A Boolean valuation
+    `v : S → Bool` is realizable as the profile of some `HornModel S cs`
+    world iff `v` satisfies every Horn clause — i.e., for every clause
+    `(a, b) ∈ cs`, if `v a = true` then `v b = true`.
+
+    This complements the *global* boundary `horn_realizable_iff` (every
+    assignment is realizable iff every clause is trivial): the global form
+    says when independence survives outright, the per-valuation form says
+    exactly *which* profiles a fixed clause list admits. Its realizability
+    notion mirrors `exclusion_realizable_iff` on the exclusion tier: a
+    world `w : HornModel S cs` whose profile matches `v` pointwise.
+    Right-to-left, the profile of `v` (read as a `Prop`-valued assignment)
+    is itself a Horn world, since the constraint transfers directly;
+    left-to-right, the realizer's Horn constraint transfers back to `v`
+    through the profile match.
+
+    Statement and proof by Claude, for the follow-up paper on constrained
+    world models (issue #5); see the file Attribution. -/
+theorem horn_valuation_realizable_iff {S : Type} (cs : List (S × S))
+    (v : S → Bool) :
+    (∃ w : HornModel S cs, ∀ s, w.val s ↔ (v s = true)) ↔
+    (∀ c ∈ cs, v c.1 = true → v c.2 = true) := by
+  constructor
+  · rintro ⟨⟨w, hw⟩, hmatch⟩ c hc hv1
+    exact (hmatch c.2).mp (hw c hc ((hmatch c.1).mpr hv1))
+  · intro hv
+    exact ⟨⟨fun s => v s = true, fun c hc h => hv c hc h⟩,
+           fun _ => Iff.rfl⟩
 
 /-- **`weatherModel` as a single-clause `HornModel`.** The weather
     model's worlds (subject to `rain → clouds`) are exactly the

@@ -180,3 +180,20 @@ made no difference (any hit over threshold fails the dimension), but the reporte
 is inflated 3x and a reviser chasing "18 boxes" will find 6. Upstream fix: gate should
 dedupe by (source line, amount), or the audit contract should specify capturing only
 the final pass's log.
+
+## Revise-phase friction (pub-revise run, 2026-07-13)
+
+## F15. The fixed compile pass count (`pdflatex → bibtex → pdflatex ×2`) does not guarantee convergence
+
+For v3 the standard cycle ends with LaTeX's "Labels may have changed. Rerun to get
+cross-references right" on the final pass: the second post-`bibtex` pass is the first
+one typeset with resolved numeric citations (`[?]` → `[16]`), which reflows enough
+lines to move several page breaks, so label *pages* recorded in the `.aux` shift once
+more and a third post-`bibtex` pass is needed to stabilize (verified: pass-4 `.aux` is
+byte-identical to pass-3's, and pass 4 is warning-free). Any numeric-cite paper whose
+citation resolution changes line breaks near a page boundary will hit this. Impact:
+an audit that runs the contract's literal pass count and greps the log for warnings
+will see a benign rerun hint on an otherwise clean document; a `\pageref`-using paper
+could even ship a stale page number. Upstream fix: make the compile contract "run
+until the rerun warning disappears (max 5 passes)" — latexmk semantics — instead of a
+fixed count.

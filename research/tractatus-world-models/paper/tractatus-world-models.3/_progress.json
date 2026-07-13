@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "thread": "tractatus-world-models",
+  "phases": {
+    "revise": {
+      "state": "done",
+      "started": "2026-07-13T16:20:00Z",
+      "completed": "2026-07-13T16:43:39Z"
+    }
+  },
+  "metadata": {
+    "iteration": 3,
+    "max_iterations": 4,
+    "revised_from": 2,
+    "score_history": [
+      {
+        "iteration": 2,
+        "total": 35,
+        "threshold": 35,
+        "rubric_id": "anvil-pub-v2"
+      }
+    ]
+  }
+}
