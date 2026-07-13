@@ -40,13 +40,41 @@ Current: v8 (READY — pub-review converged at 39/40, 0 critical issues; review 
 
 ## LaTeX build
 
+Versions up to v8 use the generic `article` class and build with two
+`pdflatex` passes:
+
 ```bash
-cd research/tractatus-ontology/paper/tractatus-ontology.{N}/
+cd research/tractatus-ontology/paper/tractatus-ontology.{N}/   # N <= 8
 mkdir -p .build
 pdflatex -interaction=nonstopmode -output-directory=.build paper.tex
 pdflatex -interaction=nonstopmode -output-directory=.build paper.tex
 cp .build/paper.pdf paper.pdf
 ```
+
+**v9 onward** is the RSL/CUP camera-ready conversion (issue #14). It uses
+the ASL author document class `asl.cls` (with `asl.bst`, `bussproofs.sty`),
+which is vendored in the version directory because it is not on CTAN — the
+class ships in the ASL Author Resources bundle
+(<https://aslonline.org/journals/author-resources/>). It needs **three**
+`pdflatex` passes (for `lastpage`/refs to converge) and the vendored class
+files must be visible to `pdflatex` (run from inside the version directory,
+or copy `asl.cls asl.bst bussproofs.sty` into `.build/`):
+
+```bash
+cd research/tractatus-ontology/paper/tractatus-ontology.9/
+mkdir -p .build
+for i in 1 2 3; do
+  pdflatex -interaction=nonstopmode -output-directory=.build paper.tex
+done
+cp .build/paper.pdf paper.pdf
+```
+
+Expected: zero errors, zero overfull hboxes, zero undefined refs/cites,
+no colour (ASL/RSL is printed black-only). The RSL production class
+`rsl.cls` (also in the bundle) is typesetter-only — it `\input`s
+CUP-internal files not distributed to authors — so it cannot be used at
+author-submission stage; `asl.cls[jsl]` with a masthead-name override is
+the author-facing class.
 
 ## Key results
 
