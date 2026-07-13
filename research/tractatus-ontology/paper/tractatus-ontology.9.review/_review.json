@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "kind": "judgment",
+  "version_dir": "tractatus-ontology.9",
+  "critic_id": "pub-review",
+  "model": "claude-fable-5",
+  "rubric": "anvil-pub-v2",
+  "scores": [
+    {"dimension": "1_rigor_of_method", "score": 6, "max": 6, "critical": false, "justification": "Machine-checked method with honestly scoped modeling decisions; the near-definitional character of the headline collapse is confronted in Remark 4.6 rather than hidden."},
+    {"dimension": "2_evidence_sufficiency", "score": 6, "max": 6, "critical": false, "justification": "80 kernel-verified results, 0 sorries, 1 inert axiom; both directions of TLP 5.52 proved; audit independently re-ran the build and cross-checked every declaration."},
+    {"dimension": "3_clarity_of_contribution", "score": 5, "max": 5, "critical": false, "justification": "Central claim displayed as a one-sentence quote in the introduction; eight numbered one-sentence contributions with section pointers."},
+    {"dimension": "4_related_work_positioning", "score": 4, "max": 5, "critical": false, "evidence_span": "Section 5, expressive-completeness paragraph", "fix": "Engage Wehmeier 2004 and Rogers & Wehmeier 2012 (RSL) on Tractarian FOL, identity, and the N-operator; resolver-verify via pub-litsearch before citing.", "justification": "Closest prior work engaged on its merits (Lokhorst, Weiss, Lampert & Nakano), but the Wehmeier line on the N-operator - including an RSL 2012 paper - is absent from a paper proving N-operator results for RSL."},
+    {"dimension": "5_reproducibility", "score": 5, "max": 5, "critical": false, "justification": "Pinned toolchain, public repo, CI, step-by-step build appendix; audit reproduced the build from scratch and content-matched the committed PDF."},
+    {"dimension": "6_figure_table_quality", "score": 4, "max": 4, "critical": false, "justification": "Both TikZ figures self-contained at caption level, black-only per venue with pattern-based encodings; appendix tables have meaningful headers and booktabs alignment."},
+    {"dimension": "7_prose_structural_quality", "score": 4, "max": 4, "critical": false, "justification": "Flow intact, calibrated hedging, 0 overfull boxes, 0 broken references per render gate; subject voice tier inactive."},
+    {"dimension": "8_citation_hygiene", "score": 5, "max": 5, "critical": false, "justification": "21/21 cites resolve, entries complete with DOIs, claim-support audit clean on on-disk sources; the four off-disk sources are canonical primary texts and the standard Lean system paper."},
+    {"dimension": "9_rhetorical_economy", "score": 3, "max": 4, "critical": false, "evidence_span": "Abstract; Section 7 Conclusion", "fix": "Compress the ~450-word abstract and the result-by-result conclusion; the result set is narrated three times at full resolution.", "justification": "Core argument economical and extractable in under 90 seconds, but abstract, contribution list, and conclusion each restate the full result set."}
+  ],
+  "findings": [
+    {"severity": "major", "dimension": "4_related_work_positioning", "evidence_span": "Section 5 / Section 4.6", "rationale": "Wehmeier 2004 and Rogers & Wehmeier 2012 (The Review of Symbolic Logic 5(4)) on Tractarian first-order logic, identity, and the N-operator are not engaged; the 2012 paper is in the target venue and directly concerns the N-operator's expressive reach. Novelty is not misrepresented (that work is paper-based, not machine-checked), so this is a deduction and a related-work lead, not a critical flag.", "suggested_fix": "Re-run pub-litsearch to resolver-verify the two identifiers and add engagement in Section 5 or Section 4.6."},
+    {"severity": "minor", "dimension": "9_rhetorical_economy", "evidence_span": "Abstract", "rationale": "Seven-paragraph (~450-word) abstract enumerates every result; ASL/RSL abstracts are customarily terser.", "suggested_fix": "Fold abstract paragraphs 4-6 into one results paragraph."},
+    {"severity": "minor", "dimension": "9_rhetorical_economy", "evidence_span": "Section 7 Conclusion", "rationale": "Conclusion re-narrates the abstract and Section 4.3 nearly verbatim - the third full statement of the result set.", "suggested_fix": "Compress the conclusion to the meaning of the results rather than their restatement."},
+    {"severity": "minor", "dimension": "4_related_work_positioning", "evidence_span": "Section 5, proof assistants paragraph", "rationale": "scherf2025, an unpublished manuscript with a deleted repository (web.archive snapshot only), is framed as 'the most directly comparable work'.", "suggested_fix": "Demote the framing or add a published comparison point."},
+    {"severity": "nit", "dimension": "8_citation_hygiene", "evidence_span": "Bibliography, fogelin1987", "rationale": "Prose credits Fogelin with initiating the debate; the critique first appeared in the 1976 first edition, while the entry cites the 1987 second edition (first edition noted parenthetically).", "suggested_fix": "Cite as Fogelin (1976/1987) at first prose mention."},
+    {"severity": "nit", "dimension": "7_prose_structural_quality", "evidence_span": "Section 4.3", "rationale": "'The three new results' reads as a version-diff leftover; a fresh reader has no baseline for 'new'.", "suggested_fix": "Say 'The results of this subsection'."}
+  ],
+  "critical_flags": [],
+  "total": 42,
+  "threshold": 35,
+  "verdict": "ADVANCE"
+}
