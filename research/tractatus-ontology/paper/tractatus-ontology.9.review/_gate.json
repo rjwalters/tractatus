@@ -1,0 +1,19 @@
+{
+  "gate": "render_gate",
+  "pdf_path": "/Volumes/Stripe/tractatus/anvil-rsl-review/research/tractatus-ontology/paper/tractatus-ontology.9/paper.pdf",
+  "log_path": "/Volumes/Stripe/tractatus/anvil-rsl-review/research/tractatus-ontology/paper/tractatus-ontology.9.audit/compile-log.txt",
+  "pages": 25,
+  "page_cap": null,
+  "overfull_boxes": [],
+  "overfull_threshold_pt": 5.0,
+  "compile": {
+    "status": "skipped",
+    "exit_code": null
+  },
+  "placeholders": [],
+  "findings": [],
+  "pass": true,
+  "reasons": [],
+  "engine_used": null,
+  "template_used": null
+}
