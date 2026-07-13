@@ -1,0 +1,9 @@
+{
+  "critic": "pub-audit",
+  "scorecard_kind": "human-verdict",
+  "started": "2026-07-13T16:05:00Z",
+  "finished": "2026-07-13T16:35:00Z",
+  "model": "claude-fable-5",
+  "schema_version": 1,
+  "notes": "Legacy-grammar thread (predates anvil): entry point paper.tex (not main.tex); hand-rolled thebibliography (no refs.bib) — cite resolution ran against \\bibitem keys; claim-support ground truth = tractatus-ontology.9/references/*.md + literature.md; build recipe = 3x pdflatex with vendored asl.cls from inside the version dir. Sidecar staged via the python -m anvil.lib.sidecar CLI shim (uv --project .anvil). Corpus tier inactive (no BRIEF.md/corpus: key for this legacy thread) — no corpus-audit sibling, per pre-#612 behavior."
+}
