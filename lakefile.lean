@@ -10,7 +10,7 @@ lean_lib Proofs where
              .one `TractatusNOperator, .one `TractatusCompleteness,
              .one `TractatusExpressibility, .one `TractatusDecidability,
              .one `TractatusOntologyHorn, .one `TractatusOntologySpectrum,
-             .one `TractatusOntologyEquiv]
+             .one `TractatusOntologyEquiv, .one `TractatusOntologyExclusion]
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4" @ "v4.26.0"
