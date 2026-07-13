@@ -8,7 +8,7 @@ Machine-checked reconstruction of Wittgenstein's *Tractatus Logico-Philosophicus
 proofs/                  # Lean 4 source
   TractatusOntology.lean     # Core formalization (1,345 lines, 45 declarations)
   TractatusQuantifiers.lean  # First-order extension (284 lines, 9 declarations)
-  TractatusNOperator.lean    # N-operator, TLP 5.52 both directions (162 lines, 8; proofs by Harmonic Aristotle)
+  TractatusNOperator.lean    # N-operator, TLP 5.52 both directions + N-generation completeness toward TLP 6 (239 lines, 11; proofs by Harmonic Aristotle)
   TractatusCompleteness.lean # Full functional completeness, TLP 5.101 (142 lines, 9; proofs by Harmonic Aristotle)
   TractatusExpressibility.lean # Exact expressibility characterization + inexpressibility of totality, TLP 1/5 (138 lines, 3; proofs by Harmonic Aristotle)
 research/tractatus-ontology/paper/
@@ -47,9 +47,9 @@ cp .build/paper.pdf paper.pdf
 ## Key results
 
 - **Expressibility collapse**: nontrivial propositions cannot express world-independent truths (`saying_showing_triviality`; no `Nonempty S` needed)
-- **Three-way decomposition**: invariants / assumptions / limits across all 74 results
+- **Three-way decomposition**: invariants / assumptions / limits across all 77 results
 - **Equivalence separation**: `structEq` strictly refines both `formEq` and `semEq`; `formEq` and `semEq` are provably **incomparable** (they do NOT form a chain), and `structEq ⊊ formEq ∩ semEq` — witnesses hold for arbitrary `S` with two distinct atoms
-- **N-operator settled both ways**: TLP 5.52 proved for finite domains; Geach–Soames critique is a theorem (`no_finite_NOp_for_forall`); full functional completeness (`functional_completeness`, needs `Nonempty S`). Proofs by Harmonic's Aristotle from our statements (see file headers + paper Acknowledgments).
+- **N-operator settled both ways**: TLP 5.52 proved for finite domains; Geach–Soames critique is a theorem (`no_finite_NOp_for_forall`); full functional completeness (`functional_completeness`, needs `Nonempty S`). N-generation completeness toward TLP 6 (`nGen_complete`): every propositional-fragment proposition is semantically equivalent to one built from the elementaries by iterated N-application. Proofs by Harmonic's Aristotle from our statements (see file headers + paper Acknowledgments).
 - **Exact expressibility + inexpressibility of totality**: over finite atoms a world-property is expressible iff invariant under pointwise-iff agreement (`expressible_iff_iff_invariant`, needs `Nonempty S`); over infinite atoms the TLP 1 totality property `fun w => ∀ s, w s` is invariant yet expressed by no proposition (`totality_not_expressible`), via finite support (`eval_depends_only_on_atoms`). Proofs by Harmonic's Aristotle from our statements.
 - **1 deliberate axiom** (`axiom silence : True`), **0 sorries**
 

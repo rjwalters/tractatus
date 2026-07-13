@@ -23,6 +23,12 @@ This file settles both directions:
   over an infinite domain, NO single N-application over finitely many
   instances of the elementary family expresses the universal
   quantifier.
+- `NGen`, `semEq_neg_congr`, `semEq_conj_congr`, `nGen_complete` — N-
+  generation completeness (toward TLP 6): every proposition of the
+  propositional fragment is semantically equivalent to one built from
+  the elementary propositions by ITERATED N-application. This extends
+  the single-application {¬, ∧} results above to the successive
+  applications of TLP 6, up to semantic equivalence.
 
 ## Attribution
 
@@ -33,6 +39,13 @@ project `c15df233-5928-4d8d-8870-14d9cbb56a53`, 2026-07-12, from the
 sorried statements; statements are unchanged from submission. All
 proofs were re-verified against this repository's pinned toolchain.
 Axiom footprint: `propext`, `Classical.choice`, `Quot.sound` only.
+
+The N-generation completeness results (`NGen`, `semEq_neg_congr`,
+`semEq_conj_congr`, `nGen_complete`) were likewise proved by Aristotle
+from our sorried statements, project
+`5d77873e-…` (batch-2 submission), 2026-07-12; statements unchanged from
+submission and re-verified against this repository's pinned toolchain,
+same axiom footprint.
 -/
 
 namespace Tractatus
@@ -158,5 +171,69 @@ theorem no_finite_NOp_for_forall {D : Type} [Infinite D]
     · exact fun x hx => Or.inr hx
   · exact False.elim <| h <|
       by simpa using List.finite_toSet (d :: ds) |> Set.Finite.exists_notMem
+
+-- ═══════════════════════════════════════════════════════════════
+-- SECTION 6: N-generation completeness (toward TLP 6)
+-- ═══════════════════════════════════════════════════════════════
+
+/-
+The results above show a SINGLE N-application expresses negation and
+conjunction. TLP 6 claims more: every proposition arises from the
+elementary propositions by SUCCESSIVE applications of N. `NGen` is the
+inductive closure of the elementaries under the N-operator;
+`nGen_complete` establishes TLP 6 for the propositional fragment, up to
+semantic equivalence — every proposition is semantically equivalent to
+an N-generated one. Combined with functional completeness (TLP 5.101,
+`TractatusCompleteness.lean`), every truth-function over finitely many
+atoms is reachable from the elementaries by iterated joint denial.
+
+Proofs by Harmonic's Aristotle, project `5d77873e-…` (batch-2); see the
+Attribution note in this file's header.
+-/
+
+/-- The propositions reachable from elementary propositions by
+    (iterated) applications of the N-operator. -/
+inductive NGen {S : Type} : Proposition S → Prop where
+  | elem (s : S) : NGen (Proposition.elementary s)
+  | nop (p : Proposition S) (ps : List (Proposition S)) :
+      NGen p → (∀ q ∈ ps, NGen q) → NGen (NOp p ps)
+
+/-- Semantic equivalence is a congruence for negation. -/
+theorem semEq_neg_congr {S : Type} {p q : Proposition S}
+    (h : Proposition.semEq p q) :
+    Proposition.semEq (Proposition.neg p) (Proposition.neg q) :=
+  fun w => not_congr (h w)
+
+/-- Semantic equivalence is a congruence for conjunction. -/
+theorem semEq_conj_congr {S : Type} {p₁ q₁ p₂ q₂ : Proposition S}
+    (h₁ : Proposition.semEq p₁ q₁) (h₂ : Proposition.semEq p₂ q₂) :
+    Proposition.semEq (Proposition.conj p₁ p₂) (Proposition.conj q₁ q₂) :=
+  fun w => and_congr (h₁ w) (h₂ w)
+
+/-- TLP 6 for the propositional fragment, up to semantic equivalence:
+    every proposition is semantically equivalent to one generated from
+    elementary propositions by iterated N-application. -/
+theorem nGen_complete {S : Type} (p : Proposition S) :
+    ∃ q : Proposition S, NGen q ∧ Proposition.semEq q p := by
+  induction p with
+  | elementary s =>
+      exact ⟨Proposition.elementary s, NGen.elem s, fun w => Iff.rfl⟩
+  | neg p ih =>
+      obtain ⟨qp, hqp, hsem⟩ := ih
+      refine ⟨NOp qp [], NGen.nop qp [] hqp (by simp), fun w => ?_⟩
+      rw [neg_via_NOp]
+      exact not_congr (hsem w)
+  | conj p r ihp ihr =>
+      obtain ⟨qp, hqp, hsemp⟩ := ihp
+      obtain ⟨qr, hqr, hsemr⟩ := ihr
+      refine ⟨NOp (NOp qp []) [NOp qr []], ?_, fun w => ?_⟩
+      · refine NGen.nop (NOp qp []) [NOp qr []]
+          (NGen.nop qp [] hqp (by simp)) ?_
+        intro x hx
+        simp only [List.mem_singleton] at hx
+        subst hx
+        exact NGen.nop qr [] hqr (by simp)
+      · rw [conj_via_NOp]
+        exact and_congr (hsemp w) (hsemr w)
 
 end Tractatus
